@@ -1,4 +1,4 @@
-import { StatusBar } from 'react-native'
+import { View, StatusBar } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
 import { Colors } from '@/constants/Colors'
@@ -20,6 +20,7 @@ const _layout = () => {
         manhwa_queries: new Map(),
         genres: new Set()
     }} >
+      <View style={{flex: 1, backgroundColor: Colors.backgroundColor}} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />
         <Stack>
             <Stack.Screen name='index' options={{headerShown: false}} />
@@ -28,7 +29,11 @@ const _layout = () => {
             <Stack.Screen name='pages/ManhwaByGenre' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaByAuthor' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaSearch' options={{headerShown: false}} />
-        </Stack>        
+            <Stack.Screen name='pages/LastUpdatePage' options={{headerShown: false}} />
+            <Stack.Screen name='pages/MostViewPage' options={{headerShown: false}} />
+            <Stack.Screen name='pages/RandomManhwaPage' options={{headerShown: false}} />
+        </Stack>
+      </View>
     </GlobalContext.Provider>
   )
 }

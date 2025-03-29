@@ -48,11 +48,13 @@ const ManhwaCover = ({
 
     return (
         <Pressable style={[{marginRight, marginBottom}, styleProp]} onPress={onPress} >
-            <Image source={manhwa.cover_image_url} contentFit='cover' style={{width, height, borderRadius: 22}} />
+            <Image source={manhwa.cover_image_url} contentFit='cover' style={{width, height, borderRadius: 4}} />
+            <View style={{position: 'absolute', left: 0, top: 0}} >
+                <ManhwaStatusComponent status={manhwa.status} fontSize={12} paddingVertical={8} paddingHorizontal={6} />
+            </View>
             <View style={styles.container} >
-                <ManhwaStatusComponent status={manhwa.status} fontSize={14} paddingVertical={8} paddingHorizontal={6} />
-                <View style={{backgroundColor: Colors.clayDust, borderBottomLeftRadius: 22, borderTopRightRadius: 4,  paddingHorizontal: 10, paddingVertical: 8}} >
-                    <Text style={[AppStyle.textRegular, {color: "black"}]}>{manhwa.title}</Text>
+                <View style={{backgroundColor: Colors.clayDust, borderTopRightRadius: 4, paddingHorizontal: 10, borderBottomLeftRadius: 4, paddingVertical: 8}} >
+                    <Text style={[AppStyle.textRegular, {color: "black", fontSize: 14}]}>{manhwa.title}</Text>
                 </View>
             </View>            
         </Pressable>

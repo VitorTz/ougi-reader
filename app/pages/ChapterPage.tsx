@@ -5,16 +5,15 @@ import {
     View, 
     Pressable, 
     ActivityIndicator, 
-    FlatList,
-    TextInput,
+    FlatList,    
     KeyboardAvoidingView,
-    Platform,
-    ScrollView
+    Platform    
 } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { AppConstants } from '@/constants/AppConstants'
 import ReturnButton from '@/components/ReturnButton'
-import ManhwaImage from '@/components/ManhwaImage'
 import { fetchChapterImages } from '@/lib/supabase'
+import ManhwaImage from '@/components/ManhwaImage'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { GlobalContext } from '@/helpers/context'
 import { FlashList } from '@shopify/flash-list'
@@ -24,7 +23,6 @@ import { Colors } from '@/constants/Colors'
 import { Chapter } from '@/models/Chapter'
 import { hp, wp } from '@/helpers/util'
 import { router } from 'expo-router'
-import { AppConstants } from '@/constants/AppConstants'
 
 
 interface ChaperHeaderProps {    
@@ -37,47 +35,31 @@ interface ChaperHeaderProps {
 
 const ChapterPageHeader = ({chapter, loading, leftChapter, rightChapter, onReturn}: ChaperHeaderProps) => {
     return (
-        <View style={{flexDirection: 'row', paddingHorizontal: wp(5), marginTop: 40, marginBottom: 20, alignItems: "center", justifyContent: "space-between"}} >
-            <View style={{gap: 10, flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
-                <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]}>Chapter</Text>
-                <Pressable onPress={leftChapter}> 
-                    <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
-                </Pressable>
-                {
-                    loading ?
-                    <ActivityIndicator size={18} color={Colors.black} /> :
-                    <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
-                }
-                <Pressable onPress={rightChapter}>
-                    <Ionicons name='chevron-forward-outline' size={20} color={Colors.black} />
-                </Pressable>
-            </View>
-            <View style={{alignItems: "center", justifyContent: "center"}} >
-                <ReturnButton onPress={onReturn} />
+        <View
+            style={{backgroundColor: 'white', paddingHorizontal: wp(5), paddingTop: 40, paddingBottom: 20}} >
+            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
+                <View style={{gap: 10, flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
+                    <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]}>Chapter</Text>
+                    <Pressable onPress={leftChapter}> 
+                        <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
+                    </Pressable>
+                    {
+                        loading ?
+                        <ActivityIndicator size={18} color={Colors.black} /> :
+                        <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
+                    }
+                    <Pressable onPress={rightChapter}>
+                        <Ionicons name='chevron-forward-outline' size={20} color={Colors.black} />
+                    </Pressable>
+                </View>
+                <View style={{alignItems: "center", justifyContent: "center"}} >
+                    <ReturnButton onPress={onReturn} />
+                </View>
             </View>
         </View>
     )
 }
 
-
-
-const ChapterComments = ({chapter, flatListRef}: {chapter: Chapter, flatListRef: any}) => {
-
-    const [text, setText] = useState('')
-
-    return (
-        <View style={{width: '100%', gap: 20}} >
-            <Text style={AppStyle.textHeader}>Comments</Text>
-            <TextInput
-                style={styles.commentInput}
-                placeholder='join discussion'
-                onFocus={() => flatListRef.current?.scrollToEnd({animated: false})}
-                multiline={true}
-                onChangeText={setText}
-            />
-        </View>
-    )
-}
 
 interface ChapterPageFooterProps {
     chapter: Chapter
@@ -153,10 +135,6 @@ const ChapterPage = () => {
         flashListRef.current?.scrollToOffset({animated: false, offset: 0})
     }
 
-    const scrollDown = () => {
-        flashListRef.current?.scrollToEnd({animated: false})
-    }
-
     const onReturn = () => {        
         context.chapter_index = null
         router.back()
@@ -194,15 +172,7 @@ const styles = StyleSheet.create({
         padding: 6, 
         borderRadius: 32, 
         backgroundColor: 'rgba(255, 255, 255, 0.7)'
-    },
-    arrowDown: {
-        position: 'absolute', 
-        bottom: 60, 
-        right: 10,
-        padding: 6, 
-        borderRadius: 32, 
-        backgroundColor: "white"
-    },
+    },    
     commentInput: {
         width: '100%',
         height: hp(14),

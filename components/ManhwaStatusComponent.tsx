@@ -9,6 +9,7 @@ interface ManhwaStatusComponentProps {
     paddingVertical?: number
     paddingHorizontal?: number    
     borderRadius?: number
+    borderLeftTopRadius?: number
 }
 
 const ManhwaStatusComponent = ({
@@ -21,9 +22,10 @@ const ManhwaStatusComponent = ({
     return (
         <View style={{
             paddingHorizontal, 
-            paddingVertical, 
+            paddingVertical,
             borderRadius,
-            borderTopRightRadius: 4,
+            borderTopLeftRadius: 4,            
+            borderBottomRightRadius: 4,
             backgroundColor: status == "Completed" ? Colors.green : Colors.frostedBlue,
             alignSelf: 'flex-start'
             

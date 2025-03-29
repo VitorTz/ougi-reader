@@ -68,7 +68,6 @@ const ManhwaPage = () => {
     const manhwa: Manhwa = context.manhwa!
     
     const onReturn = () => {
-        context.manhwa = null
         router.back()
     }
 
@@ -84,9 +83,9 @@ const ManhwaPage = () => {
                     <ReturnButton onPress={onReturn}/>                    
                 </View>
                 <View style={{flex: 1, gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: wp(8)}}>
-                    <Image source={manhwa.cover_image_url} style={{width: 300, height: 420, borderRadius: 22}} />                    
+                    <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
                     <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
+                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 1}]}>{manhwa.descr}</Text>
                     <ManhwaInfo manhwa={manhwa}/>
                     <ChapterList manhwa_id={manhwa.manhwa_id} />
                 </View> 
@@ -104,6 +103,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         top: 0,
-        height: hp(100),
+        height: hp(120)
     }
 })

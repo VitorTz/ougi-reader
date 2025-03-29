@@ -1,19 +1,19 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchManhwasMostView } from '@/lib/supabase'
+import { fetchManhwasMostView, fetchRandomManhwa } from '@/lib/supabase'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { router } from 'expo-router'
 
 
 var page = 0
 
-const ManhawasMostViewComponent = () => {
+const ManhwaRandomComponent = () => {
 
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {        
-        await fetchManhwasMostView(page)
+        await fetchRandomManhwa()
             .then(values => setManhwas([...values]))
     }
 
@@ -25,10 +25,10 @@ const ManhawasMostViewComponent = () => {
     )
 
     return (        
-        <ManhwaHorizontalGrid title='Most View' manhwas={manhwas} onPress={() => router.navigate("/pages/MostViewPage")} />
+        <ManhwaHorizontalGrid title='Random' manhwas={manhwas} onPress={() => router.navigate("/pages/RandomManhwaPage")}/>
     )
 }
 
-export default ManhawasMostViewComponent;
+export default ManhwaRandomComponent;
 
 const styles = StyleSheet.create({})

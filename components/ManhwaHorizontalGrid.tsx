@@ -1,26 +1,38 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
 import { AppStyle } from '@/style/AppStyles'
 import { Manhwa } from '@/models/Manhwa'
 import { FlashList } from '@shopify/flash-list'
 import React from 'react'
 import ManhwaCover from './ManhwaCover'
+import { Colors } from '@/constants/Colors'
 
-
-interface ManhwaHorizontalGridProps {
-    title: string
-    manhwas: Manhwa[]
-}
 
 const width: number = AppConstants.ManhwaCoverDimension.width
 const height: number = AppConstants.ManhwaCoverDimension.height
 
 
-const ManhwaHorizontalGrid = ({title, manhwas}: ManhwaHorizontalGridProps) => {
+interface ManhwaHorizontalGridProps {
+    title: string
+    manhwas: Manhwa[]
+    onPress?: () => void
+}
+
+
+const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridProps) => {
+
     
     return (
         <View style={{gap: 20}} >
-            <Text style={AppStyle.textHeader}>{title}</Text>
+            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
+                <Text style={AppStyle.textHeader}>{title}</Text>
+                {
+                    onPress &&
+                    <Pressable onPress={onPress} hitSlop={AppConstants.hitSlopLarge} style={{paddingVertical: 6, paddingHorizontal: 10, backgroundColor: Colors.black, borderRadius: 4}} >
+                        <Text style={[AppStyle.textRegular, {color: 'white', fontSize: 14}]}>view all</Text>
+                    </Pressable>
+                }
+            </View>
             <View style={{alignItems: 'flex-start', height, width: '100%'}}>
                 <FlashList                    
                     data={manhwas}

@@ -11,6 +11,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { AppConstants } from '@/constants/AppConstants'
 import { AppStyle } from '@/style/AppStyles'
 import GenresGrid from '@/components/GenresGrid'
+import ManhwaRandomComponent from '@/components/ManhwaRandomComponent'
 
 
 const index = () => {
@@ -41,6 +42,7 @@ const index = () => {
           <GenresGrid/>
           <ManhwaLastUpdatedComponent/>
           <ManhawasMostViewComponent/>
+          <ManhwaRandomComponent/>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -68,6 +68,17 @@ export async function fetchManhwaByGenre(genre: string): Promise<Manhwa[]> {
     return data.map(item => item.manhwas as any)
 }
 
+export async function fetchRandomManhwa(): Promise<Manhwa[]> {
+    const { data, error } = await supabase
+        .rpc('get_random_manhwas', { x: MANHWAS_PER_PAGE });
+
+    if (error) {
+        console.log(error)
+        return []
+    }
+    return data
+}
+
 
 export async function fetchManhwaAltTitles(manhwa_id: number, altTitleMap: Map<number, string[]>): Promise<string[]> {
     if (altTitleMap.has(manhwa_id)) {
@@ -215,9 +226,9 @@ export async function fetchChapterImages(chapter_id: number, imageMap: Map<numbe
 
 export async function updateManhwaViews(manhwa_id: number) {    
     const { error } = await supabase
-    .rpc('increment_manhwa_views', {
-        p_manhwa_id: manhwa_id
-    });
+        .rpc('increment_manhwa_views', {
+            p_manhwa_id: manhwa_id  
+        });
 
     if (error) {
         console.error('Error incrementing views:', error);
