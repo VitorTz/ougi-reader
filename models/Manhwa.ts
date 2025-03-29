@@ -8,4 +8,5 @@ export type Manhwa = {
     cover_image_url: string
     status: "OnGoing" | "Completed"
     updated_at: string
+    color: string
 }

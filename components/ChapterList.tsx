@@ -39,11 +39,11 @@ const ChapterItem = ({chapter, index}: {chapter: Chapter, index: number}) => {
                 height: 48,
                 marginBottom: 10, 
                 justifyContent: "center",                 
-                borderRadius: 4, 
+                borderRadius: 48, 
                 alignItems: "center", 
-                borderWidth: 1,
+                borderWidth: 1,                
                 backgroundColor: isReaded ? Colors.green : 'none',
-                borderColor: Colors.black
+                borderColor: isReaded ? Colors.green : Colors.black
             }}>
             <Text style={AppStyle.textRegular}>{chapter.chapter_num}</Text>
         </Pressable>

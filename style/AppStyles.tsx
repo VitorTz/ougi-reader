@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
-
+import { wp } from "@/helpers/util";
 
 
 export const AppStyle = StyleSheet.create({
@@ -17,5 +17,11 @@ export const AppStyle = StyleSheet.create({
         fontSize: 16,
         color: Colors.black,
         textDecorationLine: "underline"
+    },
+    safeArea: {
+        width: '100%', 
+        flex: 1, 
+        padding: wp(5), 
+        backgroundColor: Colors.backgroundColor
     }
 })

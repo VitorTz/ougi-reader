@@ -5,7 +5,11 @@ import {
     View, 
     Pressable, 
     ActivityIndicator, 
-    FlatList
+    FlatList,
+    TextInput,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView
 } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import ReturnButton from '@/components/ReturnButton'
@@ -25,27 +29,76 @@ import { AppConstants } from '@/constants/AppConstants'
 
 interface ChaperHeaderProps {    
     chapter?: Chapter
+    loading: boolean
     leftChapter: () => void
     rightChapter: () => void
     onReturn: () => void
 }
 
-const ChapterHeader = ({chapter, leftChapter, rightChapter, onReturn}: ChaperHeaderProps) => {
+const ChapterPageHeader = ({chapter, loading, leftChapter, rightChapter, onReturn}: ChaperHeaderProps) => {
     return (
         <View style={{flexDirection: 'row', paddingHorizontal: wp(5), marginTop: 40, marginBottom: 20, alignItems: "center", justifyContent: "space-between"}} >
             <View style={{gap: 10, flexDirection: 'row', alignItems: "center", justifyContent: "center"}} >
                 <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]}>Chapter</Text>
                 <Pressable onPress={leftChapter}> 
                     <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
-                </Pressable>                
-                <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
+                </Pressable>
+                {
+                    loading ?
+                    <ActivityIndicator size={18} color={Colors.black} /> :
+                    <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
+                }
                 <Pressable onPress={rightChapter}>
-                    <Ionicons name='chevron-forward-outline' size={22} color={Colors.black} />
+                    <Ionicons name='chevron-forward-outline' size={20} color={Colors.black} />
                 </Pressable>
             </View>
             <View style={{alignItems: "center", justifyContent: "center"}} >
                 <ReturnButton onPress={onReturn} />
             </View>
+        </View>
+    )
+}
+
+
+
+const ChapterComments = ({chapter, flatListRef}: {chapter: Chapter, flatListRef: any}) => {
+
+    const [text, setText] = useState('')
+
+    return (
+        <View style={{width: '100%', gap: 20}} >
+            <Text style={AppStyle.textHeader}>Comments</Text>
+            <TextInput
+                style={styles.commentInput}
+                placeholder='join discussion'
+                onFocus={() => flatListRef.current?.scrollToEnd({animated: false})}
+                multiline={true}
+                onChangeText={setText}
+            />
+        </View>
+    )
+}
+
+interface ChapterPageFooterProps {
+    chapter: Chapter
+    leftChapter: () => void
+    rightChapter: () => void    
+}
+
+const ChapterPageFooter = ({chapter, leftChapter, rightChapter}: ChapterPageFooterProps) => {
+    return (
+        <View style={{width: '100%', gap: 20, paddingHorizontal: wp(5), marginBottom: 100}} >
+            <View style={{flexDirection: 'row', marginVertical: 20, alignItems: "center", width: '100%'}} >
+                <View style={{width: '100%', gap: 10, flexDirection: 'row', alignItems: "center", justifyContent: "flex-end"}} >                    
+                    <Pressable onPress={leftChapter}> 
+                        <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
+                    </Pressable>                
+                    <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
+                    <Pressable onPress={rightChapter}>
+                        <Ionicons name='chevron-forward-outline' size={22} color={Colors.black} />
+                    </Pressable>
+                </View>
+            </View>            
         </View>
     )
 }
@@ -57,23 +110,20 @@ const ChapterPage = () => {
     const [images, setImages] = useState<ChapterImage[]>([])
     const [chapter, setChapter] = useState<Chapter | null>(null)    
 
-    const flashListRef = useRef<FlatList<ChapterImage>>()
+    const flashListRef = useRef<FlashList<ChapterImage>>()
 
-    const update = async () => {            
-        flashListRef.current?.scrollToOffset({animated: false, offset: 0})
+    const update = async () => {
+        setLoading(true)
         
+        flashListRef.current?.scrollToOffset({animated: false, offset: 0})        
         const newChapter = context.chapters![context.chapter_index!]
         context.chapter_readed.add(newChapter.chapter_id)
-        console.log(context.chapter_readed)
-        
-        setLoading(true)
         setChapter(newChapter)
-
+        
         await fetchChapterImages(
             newChapter.chapter_id,
             context.chapter_images            
         ).then(values => setImages([...values]))
-        
 
         setLoading(false)
     }
@@ -100,7 +150,11 @@ const ChapterPage = () => {
     }
 
     const scrollUp = () => {
-        flashListRef.current?.scrollToOffset({animated: true, offset: 0})
+        flashListRef.current?.scrollToOffset({animated: false, offset: 0})
+    }
+
+    const scrollDown = () => {
+        flashListRef.current?.scrollToEnd({animated: false})
     }
 
     const onReturn = () => {        
@@ -109,28 +163,52 @@ const ChapterPage = () => {
     }
 
     return (
-        <SafeAreaView style={{width: '100%', flex: 1, backgroundColor: "white"}}>            
-            <View style={{flex: 1}}>                
-                <View style={{justifyContent: 'flex-start', flex: 1}}>
-                    {!loading &&                    
-                        <FlatList
-                            nestedScrollEnabled={true}
-                            ref={flashListRef as any}                            
-                            initialNumToRender={1}
-                            ListHeaderComponent={<ChapterHeader chapter={chapter!} leftChapter={leftChapter} rightChapter={rightChapter} onReturn={onReturn} />}
-                            data={images}                        
-                            keyExtractor={(item: ChapterImage, index: number) => index.toString()}                            
-                            renderItem={({item}) => <ManhwaImage image={item} />}/>
-                    } 
-                </View>
-            </View>
-            <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={{position: 'absolute', bottom: 20, right: 10, padding: 6, borderRadius: 32, backgroundColor: "white"}} >
-                <Ionicons name='arrow-up-outline' size={20} color={Colors.black} />
-            </Pressable>
-        </SafeAreaView>
+        <KeyboardAvoidingView 
+            style={{flex: 1} } 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>            
+                <FlatList
+                    ref={flashListRef as any}
+                    nestedScrollEnabled={true}
+                    initialNumToRender={1}
+                    ListHeaderComponent={<ChapterPageHeader chapter={chapter!} loading={loading} leftChapter={leftChapter} rightChapter={rightChapter} onReturn={onReturn} />}
+                    ListFooterComponent={<ChapterPageFooter chapter={chapter!} leftChapter={leftChapter} rightChapter={rightChapter} />}
+                    data={images}
+                    keyExtractor={(item: ChapterImage, index: number) => index.toString()}
+                    renderItem={({item}) => <ManhwaImage image={item} />}/>                
+                <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
+                    <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+                </Pressable>
+            </SafeAreaView>            
+        </KeyboardAvoidingView>
     )
 }
 
 export default ChapterPage
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    arrowUp: {
+        position: 'absolute', 
+        bottom: 20, 
+        right: 10, 
+        padding: 6, 
+        borderRadius: 32, 
+        backgroundColor: 'rgba(255, 255, 255, 0.7)'
+    },
+    arrowDown: {
+        position: 'absolute', 
+        bottom: 60, 
+        right: 10,
+        padding: 6, 
+        borderRadius: 32, 
+        backgroundColor: "white"
+    },
+    commentInput: {
+        width: '100%',
+        height: hp(14),
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        borderRadius: 4,
+        verticalAlign: 'top'
+    }
+})

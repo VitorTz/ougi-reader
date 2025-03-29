@@ -16,7 +16,9 @@ const _layout = () => {
         manhwa_genres: new Map(),
         manhwa_authors: new Map(),
         manhwa_by_author: new Map(),
-        manhwa_alt_titles: new Map()
+        manhwa_alt_titles: new Map(),
+        manhwa_queries: new Map(),
+        genres: new Set()
     }} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />
         <Stack>
@@ -25,6 +27,7 @@ const _layout = () => {
             <Stack.Screen name='pages/ChapterPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaByGenre' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaByAuthor' options={{headerShown: false}} />
+            <Stack.Screen name='pages/ManhwaSearch' options={{headerShown: false}} />
         </Stack>        
     </GlobalContext.Provider>
   )

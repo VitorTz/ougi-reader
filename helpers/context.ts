@@ -15,6 +15,8 @@ export interface GlobalContextProps {
     manhwa_authors: Map<number, ManhwaAuthor[]>
     manhwa_by_author: Map<number, Manhwa[]>
     manhwa_alt_titles: Map<number, string[]>
+    manhwa_queries: Map<string, Manhwa[]>
+    genres: Set<string>
 }
 
 export const GlobalContext = React.createContext<GlobalContextProps>({
@@ -26,5 +28,7 @@ export const GlobalContext = React.createContext<GlobalContextProps>({
   manhwa_genres: new Map(),
   manhwa_authors: new Map(),
   manhwa_by_author: new Map(),
-  manhwa_alt_titles: new Map()
+  manhwa_alt_titles: new Map(),
+  manhwa_queries: new Map(),
+  genres: new Set()
 });

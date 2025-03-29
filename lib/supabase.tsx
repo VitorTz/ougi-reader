@@ -15,7 +15,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey)
 export async function fetchManhwasLastUpdated(page: number): Promise<Manhwa[]> {
     const { data, error } = await supabase
         .from("manhwas")
-        .select("manhwa_id, title, descr, views, status, cover_image_url, updated_at")
+        .select("manhwa_id, title, descr, views, status, cover_image_url, color, updated_at")
         .order("updated_at", {ascending: false})
         .range(page * MANHWAS_PER_PAGE, (page * MANHWAS_PER_PAGE) + MANHWAS_PER_PAGE - 1)
         .overrideTypes<Manhwa[]>()
@@ -55,7 +55,7 @@ export async function fetchManhwaGenres(manhwa_id: number, genreMap: Map<number,
 export async function fetchManhwaByGenre(genre: string): Promise<Manhwa[]> {
     const { data, error } = await supabase
         .from("manhwa_genres")
-        .select("manhwas (manhwa_id, title, descr, views, status, cover_image_url, updated_at)")
+        .select("manhwas (manhwa_id, title, descr, views, status, cover_image_url, color, updated_at)")
         .eq("genre", genre)
         .order("manhwas (views)", {ascending: false})
         .overrideTypes<Manhwa[]>()
@@ -89,6 +89,27 @@ export async function fetchManhwaAltTitles(manhwa_id: number, altTitleMap: Map<n
     return r
 }
 
+export async function fetchManhwaByName(name: string, queries: Map<string, Manhwa[]>): Promise<Manhwa[]> {    
+    name = name.trim()
+    if (queries.has(name)) {        
+        return queries.get(name)!
+    }
+    
+    const { data, error } = await supabase
+        .from("manhwa_titles")
+        .select("manhwas (manhwa_id, title, descr, views, status, cover_image_url, color, updated_at)")
+        .ilike("title", `%${name}%`)
+    
+    if (error) {
+        console.log(error)
+        return []
+    }
+
+    const r = data.map(item => item.manhwas) as any
+    queries.set(name, r)
+    return r
+}
+
 export async function fetchManhwaByAuthor(
     author_id: number,     
     authorMap: Map<number, Manhwa[]>
@@ -99,7 +120,7 @@ export async function fetchManhwaByAuthor(
 
     const { data, error } = await supabase
         .from("manhwa_authors")
-        .select("manhwas (manhwa_id, title, descr, views, status, cover_image_url, updated_at)")
+        .select("manhwas (manhwa_id, title, descr, views, status, cover_image_url, color, updated_at)")
         .eq("author_id", author_id)
         .order("manhwas (views)", {ascending: false})
         .overrideTypes<Manhwa[]>()
@@ -129,7 +150,8 @@ export async function fetchManhwaAuthors(manhwa_id: number, authorMap: Map<numbe
     if (error) {
         console.log(error)
         return []
-    }   
+    }
+
     const r = data.map(item => item.authors) as any
     authorMap.set(manhwa_id, r)
     return r
@@ -139,7 +161,7 @@ export async function fetchManhwaAuthors(manhwa_id: number, authorMap: Map<numbe
 export async function fetchManhwasMostView(page: number): Promise<Manhwa[]> {
     const { data, error } = await supabase
         .from("manhwas")
-        .select("manhwa_id, title, descr, views, status, cover_image_url, updated_at")
+        .select("manhwa_id, title, descr, views, status, cover_image_url, color, updated_at")
         .order("views", {ascending: false})
         .range(page * MANHWAS_PER_PAGE, (page * MANHWAS_PER_PAGE) + MANHWAS_PER_PAGE - 1)
         .overrideTypes<Manhwa[]>()
@@ -148,6 +170,7 @@ export async function fetchManhwasMostView(page: number): Promise<Manhwa[]> {
         console.log(error)
         return []
     }
+
     return data
 }
 
@@ -158,10 +181,12 @@ export async function fetchManhwaChapterList(manhwa_id: number): Promise<Chapter
         .eq("manhwa_id", manhwa_id)
         .order("chapter_num", {ascending: true})        
         .overrideTypes<Chapter[]>()    
+
     if (error) {
         console.log(error)
         return []
     }
+
     return data
 }
 
@@ -178,6 +203,7 @@ export async function fetchChapterImages(chapter_id: number, imageMap: Map<numbe
         .select("image_url, width, height")
         .eq("chapter_id", chapter_id)
         .order("index", {ascending: true})
+
     if (error) {
         console.log(error)
         return []
@@ -197,4 +223,19 @@ export async function updateManhwaViews(manhwa_id: number) {
         console.error('Error incrementing views:', error);
         return null;
     }  
+}
+
+
+export async function fetchGenres(genres: Set<string>) {
+    if (genres.size > 0) { return }
+
+    const { data, error } = await supabase
+        .rpc('get_genres');
+
+    if (error) {
+        console.error('Error fetching enum values:', error);
+        return [];
+    }
+
+    data.map((item: any) => genres.add(item.genre));
 }

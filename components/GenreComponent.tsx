@@ -18,7 +18,7 @@ const GenreComponent = ({genre}: {genre: string}) => {
             paddingHorizontal: 10, 
             paddingVertical: 12, 
             borderRadius: 4, 
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.clayDust,
             alignSelf: 'flex-start'}}>
         <Text style={AppStyle.textRegular}>{genre}</Text>
     </Pressable>

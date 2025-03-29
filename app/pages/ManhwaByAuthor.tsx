@@ -11,6 +11,7 @@ import { FlashList } from '@shopify/flash-list'
 import { AppConstants } from '@/constants/AppConstants'
 import ManhwaCover from '@/components/ManhwaCover'
 import { GlobalContext } from '@/helpers/context'
+import { AppStyle } from '@/style/AppStyles'
 
 const ManhwaByAuthor = () => {
 
@@ -35,7 +36,7 @@ const ManhwaByAuthor = () => {
     )
 
     return (
-        <SafeAreaView style={{width: '100%', flex: 1, padding: wp(5), backgroundColor: Colors.backgroundColor}}>
+        <SafeAreaView style={AppStyle.safeArea}>
             <TopBar title={`${author_role}: ${author_name}`}>
                 <ReturnButton/>
             </TopBar>
@@ -44,7 +45,7 @@ const ManhwaByAuthor = () => {
                     data={manhwas}
                     keyExtractor={(item: Manhwa) => item.manhwa_id.toString()}
                     estimatedItemSize={AppConstants.ManhwaCoverDimension.height}
-                    renderItem={({item, index}) => <View style={{alignSelf: 'center', marginBottom: 20}} ><ManhwaCover manhwa={item}/></View>}
+                    renderItem={({item, index}) => <ManhwaCover manhwa={item} marginBottom={20} styleProp={{alignSelf: "center"}}/>}
                 />
             </View>
         </SafeAreaView>

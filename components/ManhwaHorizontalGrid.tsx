@@ -1,12 +1,10 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { AppConstants } from '@/constants/AppConstants'
-import { Dimensions } from 'react-native'
 import { AppStyle } from '@/style/AppStyles'
 import { Manhwa } from '@/models/Manhwa'
 import { FlashList } from '@shopify/flash-list'
 import React from 'react'
 import ManhwaCover from './ManhwaCover'
-import { wp } from '@/helpers/util'
 
 
 interface ManhwaHorizontalGridProps {
@@ -29,7 +27,7 @@ const ManhwaHorizontalGrid = ({title, manhwas}: ManhwaHorizontalGridProps) => {
                     horizontal={true}
                     keyExtractor={(item: Manhwa) => item.manhwa_id.toString()}
                     estimatedItemSize={width}
-                    renderItem={({item}) => <View style={{marginRight: 10}}><ManhwaCover manhwa={item}/></View>}
+                    renderItem={({item}) => <ManhwaCover manhwa={item} marginRight={4} />}
                 />
             </View>
         </View>
