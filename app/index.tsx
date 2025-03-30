@@ -1,9 +1,8 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useContext, useEffect } from 'react'
-import { wp } from '@/helpers/util'
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native'
+import React, { useCallback, useContext } from 'react'
 import TopBar from '@/components/TopBar'
 import ManhwaLastUpdatedComponent from '@/components/ManhwaLastUpdatedComponent'
-import ManhawasMostViewComponent from '@/components/ManhwasMostViewComponent'
+import MostViewedManhwasComponent from '@/components/ManhwasMostViewComponent'
 import { Colors } from '@/constants/Colors'
 import { GlobalContext } from '@/helpers/context'
 import { router, useFocusEffect } from 'expo-router'
@@ -32,7 +31,7 @@ const index = () => {
 
   const openMenu = () => {
 
-  }
+  }  
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
@@ -50,7 +49,7 @@ const index = () => {
         <View style={{flex: 1, gap: 20}}>
           <GenresGrid/>
           <ManhwaLastUpdatedComponent/>
-          <ManhawasMostViewComponent/>
+          <MostViewedManhwasComponent/>
           <ManhwaRandomComponent/>
         </View>
       </ScrollView>

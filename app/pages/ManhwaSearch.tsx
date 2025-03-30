@@ -6,7 +6,7 @@ import { wp } from '@/helpers/util'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import SearchBar from '@/components/SearchBar'
 import { Manhwa } from '@/models/Manhwa'
-import { fetchManhwaByName, fetchManhwasMostView } from '@/lib/supabase'
+import { fetchManhwaByName, fetchMostViewedManhwas } from '@/lib/supabase'
 import { GlobalContext } from '@/helpers/context'
 import { AppStyle } from '@/style/AppStyles'
 import ManhwaGrid from '@/components/ManhwaGrid'
@@ -19,7 +19,7 @@ const SearchManhwa = () => {
     const [hasResults, setHasResults] = useState(true)
 
     const init = async () => {
-        await fetchManhwasMostView(0)
+        await fetchMostViewedManhwas()
             .then(values => {
                 setHasResults(values.length > 0)
                 setManhwas([...values])

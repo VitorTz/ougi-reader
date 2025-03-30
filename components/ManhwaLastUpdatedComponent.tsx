@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchManhwasLastUpdated } from '@/lib/supabase'
+import { fetchLastUpdatedManhwas } from '@/lib/supabase'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { router } from 'expo-router'
 
@@ -13,7 +13,7 @@ const ManhwaLastUpdatedComponent = () => {
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {        
-        await fetchManhwasLastUpdated(page)
+        await fetchLastUpdatedManhwas(0, 30, 3)
             .then(values => setManhwas([...values]))
     }
 

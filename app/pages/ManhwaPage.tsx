@@ -69,7 +69,7 @@ const ManhwaPage = () => {
     
     const onReturn = () => {
         router.back()
-    }
+    }    
 
     return (
         <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>

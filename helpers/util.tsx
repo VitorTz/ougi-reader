@@ -41,3 +41,10 @@ export function getItemGridDimensions(
     const height = width * (originalHeight / originalWidth)
     return {width, height}
 }
+
+
+export function formatTimestamp(timestamp: string): string {    
+    const date = new Date(timestamp);
+    const options = { month: 'long', day: 'numeric', year: 'numeric' };    
+    return date.toLocaleDateString('en-US', options as any);
+}

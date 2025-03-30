@@ -1,19 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchManhwasMostView } from '@/lib/supabase'
+import { fetchMostViewedManhwas } from '@/lib/supabase'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { router } from 'expo-router'
 
 
-var page = 0
-
-const ManhawasMostViewComponent = () => {
+const MostViewedManhwasComponent = () => {
 
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {        
-        await fetchManhwasMostView(page)
+        await fetchMostViewedManhwas()
             .then(values => setManhwas([...values]))
     }
 
@@ -24,11 +22,18 @@ const ManhawasMostViewComponent = () => {
         []
     )
 
-    return (        
-        <ManhwaHorizontalGrid title='Most View' manhwas={manhwas} onPress={() => router.navigate("/pages/MostViewPage")} />
+    const onPress = () => {
+        () => router.navigate("/pages/MostViewPage")
+    }
+
+    return (
+        <ManhwaHorizontalGrid 
+            title='Most View' 
+            manhwas={manhwas} 
+            onPress={onPress}/>
     )
 }
 
-export default ManhawasMostViewComponent;
+export default MostViewedManhwasComponent;
 
 const styles = StyleSheet.create({})

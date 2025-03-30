@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import React, { useCallback, useEffect, useState } from 'react'
-import { fetchManhwasMostView, fetchRandomManhwa } from '@/lib/supabase'
+import { fetchRandomManhwa } from '@/lib/supabase'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { router } from 'expo-router'
 

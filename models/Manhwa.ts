@@ -1,3 +1,4 @@
+import { Chapter } from "./Chapter"
 
 
 export type Manhwa = {
@@ -9,4 +10,5 @@ export type Manhwa = {
     status: "OnGoing" | "Completed"
     updated_at: string
     color: string
+    chapters: Chapter[] | null
 }
