@@ -107,14 +107,14 @@ export async function fetchManhwaByName(
     p_limit: number = 30,
     p_num_chapters: number = 3
 ): Promise<Manhwa[]> {    
-    
+    console.log(p_name_manhwa, p_offset, p_limit, p_num_chapters)
     p_name_manhwa = p_name_manhwa.trim()
     if (queries.has(p_name_manhwa)) {        
         return queries.get(p_name_manhwa)!
     }
     
     const { data, error } = await supabase
-        .rpc('get_manhwas_by_name', { p_offset, p_limit, p_num_chapters });
+        .rpc('get_manhwas_by_name', { p_offset, p_limit, p_num_chapters, p_name_manhwa });
 
     if (error) {
         console.log(error)

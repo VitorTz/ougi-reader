@@ -4,7 +4,8 @@ import {
     SafeAreaView, 
     Text, 
     View, 
-    Pressable
+    Pressable,
+    Platform
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
@@ -21,8 +22,11 @@ import { fetchManhwaAuthors, fetchManhwaGenres } from '@/lib/supabase'
 import GenreComponent from '@/components/GenreComponent'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AuthorComponent from '@/components/AuthorComponent'
-import { hp, wp } from '@/helpers/util';
-
+import { formatTimestamp, hp, wp } from '@/helpers/util';
+import Item from '@/components/Item';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { AppConstants } from '@/constants/AppConstants';
+import HomeButton from '@/components/HomeButton';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -48,7 +52,10 @@ const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
 
     return (
         <View style={{alignSelf: 'flex-start', gap: 10}}>
-            <ManhwaStatusComponent status={manhwa.status} borderRadius={4} />
+            <View style={{flexDirection: 'row', gap: 10}} >
+                <ManhwaStatusComponent status={manhwa.status} borderRadius={4} />
+                <Item text={`updated at: ${formatTimestamp(manhwa.updated_at)}`} backgroundColor={Colors.accentColor} />
+            </View>
             <View style={{flexDirection: 'row', gap: 10, flexWrap: 'wrap'}} >
                 {
                     genres.map(item => <GenreComponent key={item} genre={item} color={Colors.accentColor} />)
@@ -79,14 +86,28 @@ const ManhwaPage = () => {
                     colors={[manhwa.color, Colors.backgroundColor]}
                     style={styles.background}
                 />
-                <View style={{marginVertical: 10, alignSelf: "flex-end", padding: wp(5)}} >
+                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
+                    <HomeButton/>
                     <ReturnButton onPress={onReturn}/>                    
                 </View>
-                <View style={{flex: 1, gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: wp(8)}}>
-                    <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
-                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
-                    <ManhwaInfo manhwa={manhwa} />
+                <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: wp(8)}}>
+                    {
+                        Platform.OS === 'web' ? 
+                        <View style={{flexDirection: 'row', gap: 20, alignItems: "flex-end", justifyContent: "flex-start"}} >  
+                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
+                            <View style={{width: '100%'}} >
+                                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
+                                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
+                                <ManhwaInfo manhwa={manhwa} />
+                            </View>
+                        </View> :
+                        <>
+                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
+                            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
+                            <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
+                            <ManhwaInfo manhwa={manhwa} />
+                        </>
+                    }                    
                     <ChapterList manhwa_id={manhwa.manhwa_id} />
                 </View> 
             </ScrollView>

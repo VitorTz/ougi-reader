@@ -23,6 +23,8 @@ const ManhwaByAuthor = () => {
     const author_name: string = params.author_name as any
     const author_role: string = params.author_role as any
 
+    console.log("12132")
+
     const init = async () => {
         await fetchManhwaByAuthor(author_id, context.manhwa_by_author)
             .then(values => setManhwas([...values]))

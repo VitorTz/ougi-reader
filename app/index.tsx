@@ -1,5 +1,11 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native'
-import React, { useCallback, useContext } from 'react'
+import { 
+  Animated,   
+  Pressable, 
+  SafeAreaView, 
+  ScrollView, 
+  StyleSheet, 
+  View } from 'react-native'
+import React, { useCallback, useState, useRef, useContext } from 'react'
 import TopBar from '@/components/TopBar'
 import ManhwaLastUpdatedComponent from '@/components/ManhwaLastUpdatedComponent'
 import MostViewedManhwasComponent from '@/components/ManhwasMostViewComponent'
@@ -11,11 +17,18 @@ import { AppConstants } from '@/constants/AppConstants'
 import { AppStyle } from '@/style/AppStyles'
 import GenresGrid from '@/components/GenresGrid'
 import ManhwaRandomComponent from '@/components/ManhwaRandomComponent'
+import LateralMenu from '@/components/LateralMenu'
+import { wp } from '@/helpers/util'
 
 
 const index = () => {
   
   const context = useContext(GlobalContext)
+
+  // Menu lateral
+  const [menuVisible, setMenuVisible] = useState(false)  
+  const menuWidth = wp(60)
+  const menuAnim = useRef(new Animated.Value(-menuWidth)).current
 
   useFocusEffect(
     useCallback(() => {      
@@ -28,19 +41,38 @@ const index = () => {
   const searchPress = () => {
     router.navigate("/pages/ManhwaSearch")
   }
-
+  
   const openMenu = () => {
-
+    Animated.timing(menuAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false
+    }).start()
+    setMenuVisible(true)
+  }
+  
+  const closeMenu = () => {
+    Animated.timing(menuAnim, {
+      toValue: -menuWidth,
+      duration: 300,
+      useNativeDriver: false
+    }).start(() => {
+      setMenuVisible(false)
+    })
   }  
+
+  const toggleMenu = () => {
+    menuVisible ? closeMenu() : openMenu()
+  }
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title='Ougi Reader'>
+      <TopBar title='Manhwa Reader'>
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
           <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
             <Ionicons name='search-outline' size={28} color={Colors.black} />
           </Pressable>
-          <Pressable onPress={openMenu} hitSlop={AppConstants.hitSlopLarge} >
+          <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlopLarge} >
             <Ionicons name='options-outline' size={28} color={Colors.black} />
           </Pressable>
         </View>
@@ -53,12 +85,32 @@ const index = () => {
           <ManhwaRandomComponent/>
         </View>
       </ScrollView>
+      {/* Menu Lateral */}
+      {
+      menuVisible && (
+        <Animated.View style={[styles.sideMenu, { width: menuWidth, transform: [{ translateX: menuAnim }] }]}>
+          <LateralMenu closeMenu={closeMenu}/>
+        </Animated.View>
+      )
+      }
     </SafeAreaView>
   )
 }
 
+export default index;
 
-
-export default index
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  sideMenu: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,        
+    backgroundColor: Colors.backgroundColor,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,    
+    zIndex: 100
+  }
+})

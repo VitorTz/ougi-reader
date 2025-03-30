@@ -1,7 +1,7 @@
 
 export const Colors = {
   black: "#000000",
-  backgroundColor: "#FDF9ED",
+  backgroundColor: "#EDF4ED",
   gray: "#2C2C2C",
   gray1: "#3D414A",
   orange: "#FF6740",
@@ -14,7 +14,7 @@ export const Colors = {
   deckColor: "#8746A7",
   cardColor: "#F24E4E",
   packColor: "#FF6740",
-  accentColor: "#86A788",
+  accentColor: "#4F9268",
   manhwaStatusColor: "#FFFDEC",
   uglyBlue: "#4984A2",  
   green: "#86A788",

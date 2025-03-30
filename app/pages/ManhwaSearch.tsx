@@ -27,7 +27,7 @@ const SearchManhwa = () => {
     }
 
     const handleSearch = async (searchTerm: string) => {
-        if (searchTerm == '') { await init(); return }        
+        if (searchTerm == '') { await init(); return }
         await fetchManhwaByName(searchTerm, context.manhwa_queries)
             .then(values => {
                 setHasResults(values.length > 0)
@@ -45,7 +45,7 @@ const SearchManhwa = () => {
 
     return (
         <SafeAreaView style={AppStyle.safeArea}>
-            <TopBar title="Manhwa Search">
+            <TopBar title="Search">
                 <ReturnButton/>
             </TopBar>
             <SearchBar handleSearch={handleSearch}/>

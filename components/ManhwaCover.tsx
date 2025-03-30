@@ -86,11 +86,22 @@ const ManhwaCover = ({
                 contentFit='cover' 
                 style={[{borderTopLeftRadius: 4, borderTopRightRadius: 4, width, height}]}
             />
-            <View style={styles.container} >
+            <View style={[styles.container, {backgroundColor: manhwa.color}]} >
                 <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {manhwa.chapters && manhwa.chapters.map(
                     (item) => <ChapterLink key={item.chapter_num} manhwa={manhwa} chapter={item} />
                 )}                
+            </View>
+            <View style={{
+                position: 'absolute', 
+                left: 4, 
+                top: 4, 
+                paddingHorizontal: 6, 
+                paddingVertical: 8, 
+                backgroundColor: manhwa.status == "Completed" ? Colors.accentColor : "#C87E6A", 
+                borderRadius: 4
+            }} >
+                <Text style={[AppStyle.textRegular, {fontSize: 12, color: 'white'}]}>{manhwa.status}</Text>
             </View>
         </Pressable>
     )
@@ -103,20 +114,26 @@ const styles = StyleSheet.create({
         padding: 10,        
         width: '100%',        
         gap: 10,
-        backgroundColor: "#e3e0d8",
+        backgroundColor: "#ABD1B5",
         borderTopWidth: 2,
         borderBottomLeftRadius: 4,
-        borderBottomRightRadius: 4,
-        borderColor: Colors.backgroundColor
+        borderBottomRightRadius: 4        
     },
     chapterLink: {        
         paddingHorizontal: 10, 
         paddingVertical: 8, 
         borderRadius: 4,
-        backgroundColor: Colors.paleYellow,
+        backgroundColor: Colors.backgroundColor,
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "space-between",
         gap: 20
+    },
+    shadow: {
+        shadowColor: 'black',
+        shadowOffset: { width: 8, height: 8 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 5    
     }
 })

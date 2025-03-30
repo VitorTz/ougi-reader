@@ -25,7 +25,10 @@ const ManhwaLastUpdatedComponent = () => {
     )
 
     return (        
-        <ManhwaHorizontalGrid title='Last Updated' manhwas={manhwas} onPress={() => router.navigate("/pages/LastUpdatePage")} />
+        <ManhwaHorizontalGrid 
+            title='Latest Releases 🔥' 
+            manhwas={manhwas} 
+            onPress={() => router.navigate("/pages/LastUpdatePage")}/>
     )
 }
 

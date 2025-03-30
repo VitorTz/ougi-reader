@@ -23,12 +23,12 @@ const MostViewedManhwasComponent = () => {
     )
 
     const onPress = () => {
-        () => router.navigate("/pages/MostViewPage")
+        router.navigate("/pages/MostViewPage")
     }
 
     return (
         <ManhwaHorizontalGrid 
-            title='Most View' 
+            title='Most View ⚡' 
             manhwas={manhwas} 
             onPress={onPress}/>
     )

@@ -22,7 +22,7 @@ const MostViewPage = () => {
 
     return (
         <SafeAreaView style={AppStyle.safeArea}>
-            <TopBar title="Most View">
+            <TopBar title="Most View ⚡">
                 <ReturnButton/>
             </TopBar>
             <ManhwaGrid manhwas={manhwas} gap={10} paddingHorizontal={wp(5)} />        

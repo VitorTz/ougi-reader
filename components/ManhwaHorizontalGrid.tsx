@@ -20,8 +20,6 @@ interface ManhwaHorizontalGridProps {
 
 
 const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridProps) => {
-
-    
     return (
         <View style={{gap: 20}} >
             <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
@@ -37,7 +35,7 @@ const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridPro
                 <FlashList                    
                     data={manhwas}
                     horizontal={true}
-                    keyExtractor={(item: Manhwa) => item.manhwa_id.toString()}
+                    keyExtractor={(item: Manhwa, index: number) => index.toString()}
                     estimatedItemSize={width}
                     renderItem={({item}) => <ManhwaCover manhwa={item} marginRight={4} />}
                 />

@@ -27,7 +27,7 @@ const LastUpdatePage = () => {
 
     return (
     <SafeAreaView style={AppStyle.safeArea}>
-        <TopBar title="Last Update">
+        <TopBar title="Latest Releases 🔥">
             <ReturnButton/>
         </TopBar>
         <ManhwaGrid manhwas={manhwas} gap={10} paddingHorizontal={wp(5)} />        
