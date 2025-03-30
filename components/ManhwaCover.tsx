@@ -9,6 +9,7 @@ import { GlobalContext } from '@/helpers/context';
 import { updateManhwaViews } from '@/lib/supabase';
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { Colors } from '@/constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 interface ManhwaCoverProps {
@@ -29,6 +30,8 @@ interface ManhwaCoverProps {
     styleProp?: StyleProp<ViewStyle>
 }
 
+const borderRadius = 22
+
 const ManhwaCover = ({
     manhwa, 
     width = coverWidth, 
@@ -47,16 +50,11 @@ const ManhwaCover = ({
     }
 
     return (
-        <Pressable style={[{marginRight, marginBottom}, styleProp]} onPress={onPress} >
-            <Image source={manhwa.cover_image_url} contentFit='cover' style={{width, height, borderRadius: 4}} />
-            <View style={{position: 'absolute', left: 0, top: 0}} >
-                <ManhwaStatusComponent status={manhwa.status} fontSize={12} paddingVertical={8} paddingHorizontal={6} />
+        <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
+            <Image source={manhwa.cover_image_url} contentFit='cover' style={[styles.image, {width, height}]} />
+            <View style={[styles.container, {backgroundColor: manhwa.color}]} >
+                <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
             </View>
-            <View style={styles.container} >
-                <View style={{backgroundColor: Colors.clayDust, borderTopRightRadius: 4, paddingHorizontal: 10, borderBottomLeftRadius: 4, paddingVertical: 8}} >
-                    <Text style={[AppStyle.textRegular, {color: "black", fontSize: 14}]}>{manhwa.title}</Text>
-                </View>
-            </View>            
         </Pressable>
     )
 }
@@ -64,10 +62,18 @@ const ManhwaCover = ({
 export default ManhwaCover
 
 const styles = StyleSheet.create({
+    image: {        
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
+        borderCurve: "continuous"
+    },
     container: {
-        alignItems: "center",
-        position: 'absolute',
-        left: 0,
-        bottom: 0
+        padding: 10,
+        borderBottomLeftRadius: borderRadius,
+        borderBottomRightRadius: borderRadius,
+        width: '100%',        
+        gap: 10,
+        borderTopWidth: 2,
+        borderColor: Colors.backgroundColor
     }
 })

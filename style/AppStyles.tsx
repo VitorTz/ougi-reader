@@ -14,8 +14,8 @@ export const AppStyle = StyleSheet.create({
         color: Colors.black
     },
     textLink: {
-        fontSize: 16,
-        color: Colors.black,
+        fontSize: 14,
+        color: "#1e1e1e",
         textDecorationLine: "underline"
     },
     safeArea: {

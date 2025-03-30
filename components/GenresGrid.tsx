@@ -14,7 +14,7 @@ const GenreItem = ({genre}: {genre: string}) => {
     }
 
     return (
-        <Pressable onPress={onPress} style={{paddingHorizontal: 10, paddingVertical: 12, marginRight: 10, backgroundColor: Colors.clayDust, alignItems: "center", justifyContent: "center", borderRadius: 22}} >
+        <Pressable onPress={onPress} style={styles.item} >
             <Text style={[AppStyle.textRegular, {fontSize: 14}]}>{genre}</Text>
         </Pressable>
     )
@@ -52,4 +52,14 @@ const GenresGrid = () => {
 
 export default GenresGrid
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    item: {
+        paddingHorizontal: 10, 
+        paddingVertical: 12, 
+        marginRight: 10, 
+        backgroundColor: "#86A788", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        borderRadius: 4
+    }
+})

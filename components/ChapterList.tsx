@@ -7,6 +7,8 @@ import { AppStyle } from '@/style/AppStyles'
 import { GlobalContext } from '@/helpers/context'
 import { router, useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { AppConstants } from '@/constants/AppConstants'
 
 
 interface ChapterListProps {
@@ -42,8 +44,8 @@ const ChapterItem = ({chapter, index}: {chapter: Chapter, index: number}) => {
                 borderRadius: 4,
                 alignItems: "center", 
                 borderWidth: 1,                
-                backgroundColor: isReaded ? context.manhwa!.color : 'none',
-                borderColor: isReaded ? context.manhwa!.color : Colors.black
+                backgroundColor: isReaded ? Colors.accentColor : 'none',
+                borderColor: isReaded ? Colors.accentColor : Colors.black
             }}>
             <Text style={AppStyle.textRegular}>{chapter.chapter_num}</Text>
         </Pressable>
@@ -71,12 +73,12 @@ const ChapterList = ({manhwa_id}: ChapterListProps) => {
             init()
         }, []),
         []
-    )
+    )    
 
     return (
         <View style={{width: '100%', gap: 20}} >
-            <Text style={AppStyle.textHeader}>Chapters</Text>
-            <View style={{width: '100%', gap: 10, flexDirection: 'row', flexWrap: 'wrap'}} >
+            <Text style={AppStyle.textHeader}>Chapters</Text>            
+            <View style={{width: '100%', columnGap: 10, flexDirection: 'row', justifyContent: "center", flexWrap: 'wrap'}} >
                 {
                     chapters.map(
                         (item, index) => <ChapterItem key={item.chapter_id} index={index} chapter={item} />

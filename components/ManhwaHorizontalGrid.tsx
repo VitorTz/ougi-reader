@@ -28,12 +28,12 @@ const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridPro
                 <Text style={AppStyle.textHeader}>{title}</Text>
                 {
                     onPress &&
-                    <Pressable onPress={onPress} hitSlop={AppConstants.hitSlopLarge} style={{paddingVertical: 6, paddingHorizontal: 10, backgroundColor: Colors.black, borderRadius: 4}} >
-                        <Text style={[AppStyle.textRegular, {color: 'white', fontSize: 14}]}>view all</Text>
+                    <Pressable onPress={onPress} hitSlop={AppConstants.hitSlopLarge}>
+                        <Text style={AppStyle.textLink}>view all</Text>
                     </Pressable>
                 }
             </View>
-            <View style={{alignItems: 'flex-start', height, width: '100%'}}>
+            <View style={{alignItems: 'flex-start', height: height + 100, width: '100%'}}>
                 <FlashList                    
                     data={manhwas}
                     horizontal={true}

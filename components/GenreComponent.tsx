@@ -5,7 +5,7 @@ import React from 'react'
 import { router } from 'expo-router'
 
 
-const GenreComponent = ({genre}: {genre: string}) => {
+const GenreComponent = ({genre, color}: {genre: string, color: string}) => {
 
     const onPress = () => {
         router.navigate({pathname: "/pages/ManhwaByGenre", params: {"genre": genre}})
@@ -18,7 +18,7 @@ const GenreComponent = ({genre}: {genre: string}) => {
             paddingHorizontal: 10, 
             paddingVertical: 12, 
             borderRadius: 4, 
-            backgroundColor: Colors.clayDust,
+            backgroundColor: color,
             alignSelf: 'flex-start'}}>
         <Text style={AppStyle.textRegular}>{genre}</Text>
     </Pressable>

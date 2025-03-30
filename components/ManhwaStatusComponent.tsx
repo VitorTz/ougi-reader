@@ -26,7 +26,7 @@ const ManhwaStatusComponent = ({
             borderRadius,
             borderTopLeftRadius: 4,            
             borderBottomRightRadius: 4,
-            backgroundColor: status == "Completed" ? Colors.green : Colors.frostedBlue,
+            backgroundColor: Colors.clayDust,
             alignSelf: 'flex-start'
             
         }} >

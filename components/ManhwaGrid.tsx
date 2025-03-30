@@ -13,23 +13,15 @@ interface ManhwaGridProps {
     gap: number
 }
 
-const ManhwaGrid = ({manhwas, paddingHorizontal, gap}: ManhwaGridProps) => {
-
-    const {width, height} = getItemGridDimensions(
-        paddingHorizontal, 
-        gap, 
-        2, 
-        AppConstants.ManhwaCoverDimension.width, 
-        AppConstants.ManhwaCoverDimension.height
-    )
+const ManhwaGrid = ({manhwas, paddingHorizontal, gap}: ManhwaGridProps) => {    
 
     return (
         <View style={{width: '100%', flex: 1, marginBottom: 10}} >
             <FlashList
                 data={manhwas}
-                numColumns={2}
+                numColumns={1}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item, index}) => <ManhwaCover marginBottom={6} manhwa={item} width={width} height={height}/>}
+                renderItem={({item, index}) => <ManhwaCover marginBottom={6} manhwa={item} styleProp={{alignSelf: "center"}} />}
                 estimatedItemSize={300}/>
         </View>
     )

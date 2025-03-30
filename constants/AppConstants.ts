@@ -2,8 +2,8 @@
 
 export const AppConstants = {
     ManhwaCoverDimension: {
-        width: 260,
-        height: 380
+        width: 300,
+        height: 420
     },
     hitSlop: {
         left: 10,

@@ -6,7 +6,7 @@ import React from 'react'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 
 
-const AuthorComponent = ({author}: {author: ManhwaAuthor}) => {
+const AuthorComponent = ({author, color}: {author: ManhwaAuthor, color: string}) => {
   const onPress = () => {
           router.navigate({
               pathname: "/pages/ManhwaByAuthor", 
@@ -20,7 +20,7 @@ const AuthorComponent = ({author}: {author: ManhwaAuthor}) => {
                   paddingHorizontal: 10, 
                   paddingVertical: 12, 
                   borderRadius: 4, 
-                  backgroundColor: Colors.clayDust,
+                  backgroundColor: color,
                   alignSelf: 'flex-start'}} >
               <Text style={AppStyle.textRegular}>{`${author.role}: ${author.name}`}</Text>
           </Pressable>

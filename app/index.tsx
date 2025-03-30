@@ -30,12 +30,21 @@ const index = () => {
     router.navigate("/pages/ManhwaSearch")
   }
 
+  const openMenu = () => {
+
+  }
+
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title='Home'>
-        <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
-          <Ionicons name='search-outline' size={28} color={Colors.black} />
-        </Pressable>
+      <TopBar title='Ougi Reader'>
+        <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+          <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
+            <Ionicons name='search-outline' size={28} color={Colors.black} />
+          </Pressable>
+          <Pressable onPress={openMenu} hitSlop={AppConstants.hitSlopLarge} >
+            <Ionicons name='options-outline' size={28} color={Colors.black} />
+          </Pressable>
+        </View>
       </TopBar>
       <ScrollView style={{width: '100%'}} >
         <View style={{flex: 1, gap: 20}}>

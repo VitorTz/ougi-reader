@@ -51,10 +51,10 @@ const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
             <ManhwaStatusComponent status={manhwa.status} borderRadius={4} />
             <View style={{flexDirection: 'row', gap: 10, flexWrap: 'wrap'}} >
                 {
-                    genres.map(item => <GenreComponent key={item} genre={item} />)
+                    genres.map(item => <GenreComponent key={item} genre={item} color={Colors.accentColor} />)
                 }
                 {
-                    authors.map(item => <AuthorComponent key={item.name} author={item} />)
+                    authors.map(item => <AuthorComponent key={item.name} author={item} color={Colors.accentColor} />)
                 }
             </View>
         </View>
@@ -76,7 +76,7 @@ const ManhwaPage = () => {
             <ScrollView style={{flex: 1}} >
                 <LinearGradient
                     // Background Linear Gradient
-                    colors={[manhwa.color, 'transparent']}
+                    colors={[manhwa.color, Colors.backgroundColor]}
                     style={styles.background}
                 />
                 <View style={{marginVertical: 10, alignSelf: "flex-end", padding: wp(5)}} >
@@ -85,8 +85,8 @@ const ManhwaPage = () => {
                 <View style={{flex: 1, gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: wp(8)}}>
                     <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
                     <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start', fontSize: 1}]}>{manhwa.descr}</Text>
-                    <ManhwaInfo manhwa={manhwa}/>
+                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
+                    <ManhwaInfo manhwa={manhwa} />
                     <ChapterList manhwa_id={manhwa.manhwa_id} />
                 </View> 
             </ScrollView>
