@@ -46,11 +46,4 @@ const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridPro
 
 export default ManhwaHorizontalGrid
 
-const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        height: height + 120, // Adjust based on title and padding
-        paddingVertical: 16,
-        gap: 20
-    },
-})
+const styles = StyleSheet.create({})

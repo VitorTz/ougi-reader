@@ -9,7 +9,7 @@ import { router } from 'expo-router'
 const HomeButton = () => {
   return (
     <Pressable 
-      onPress={() => router.replace('/')} 
+      onPress={() => router.replace('/pages/Home')} 
       hitSlop={AppConstants.hitSlopLarge} 
       style={styles.container} >
         <Ionicons name='home' size={20} color={Colors.white} />

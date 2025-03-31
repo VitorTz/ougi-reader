@@ -3,6 +3,7 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import { GlobalContext } from '@/helpers/context'
+import Toast from '@/components/Toast'
 
 
 const _layout = () => {
@@ -18,7 +19,13 @@ const _layout = () => {
         manhwa_by_author: new Map(),
         manhwa_alt_titles: new Map(),
         manhwa_queries: new Map(),
-        genres: new Set()
+        genres: new Set(),
+        user_bookmarks: new Map(),
+        session: null,
+        most_view_manhwas: {mawnhas: [], last_update: null},
+        last_update_manhwas: {mawnhas: [], last_update: null},
+        random_manhwas: {mawnhas: [], last_update: null},
+        user: null
     }} >
       <View style={{flex: 1, backgroundColor: Colors.backgroundColor}} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />
@@ -33,7 +40,12 @@ const _layout = () => {
             <Stack.Screen name='pages/MostViewPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/RandomManhwaPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/AccountPage' options={{headerShown: false}} />
+            <Stack.Screen name='pages/Home' options={{headerShown: false}} />
+            <Stack.Screen name='pages/SignPage' options={{headerShown: false}} />  
+            <Stack.Screen name='pages/SignUpPage' options={{headerShown: false}} />  
+            <Stack.Screen name='pages/BookmarkPage' options={{headerShown: false}} />  
         </Stack>
+        <Toast.Component/>
       </View>
     </GlobalContext.Provider>
   )

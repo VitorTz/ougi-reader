@@ -1,9 +1,12 @@
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import { AppStyle } from '@/style/AppStyles'
 import CloseBtn from './CloseBtn'
-import React from 'react'
+import React, { useContext } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
+import { fetchRandomManhwa } from '@/lib/supabase'
+import { router } from 'expo-router'
+import { GlobalContext } from '@/helpers/context'
 
 
 interface LateralMenuProps {
@@ -12,14 +15,27 @@ interface LateralMenuProps {
 
 const iconColor = Colors.white
 
+
+
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
-  return (
+
+    const context = useContext(GlobalContext)
+
+    const randomRead = async () => {
+        const manhwaList = await fetchRandomManhwa(0, 1, 0)
+        const manhwa = manhwaList[0]
+        context.manhwa = manhwa
+        closeMenu()
+        router.navigate({pathname: "/pages/ManhwaPage"})
+    }
+
+    return (
     <View style={styles.container} >
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >
             <Text style={AppStyle.textHeader}>Menu</Text>
             <CloseBtn onPress={closeMenu} style={{padding: 2}} />
         </View>
-        <Pressable style={styles.link} >
+        <Pressable onPress={() => router.navigate("/pages/AccountPage")} style={styles.link} >
             <Text style={AppStyle.textRegular}>Account</Text>
             <Ionicons name='person-outline' size={20} color={iconColor} />
         </Pressable>
@@ -27,7 +43,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             <Text style={AppStyle.textRegular}>Bookmarks</Text>
             <Ionicons name='bookmarks-outline' size={20} color={iconColor} />
         </Pressable>
-        <Pressable style={styles.link} >
+        <Pressable onPress={randomRead} style={styles.link} >
             <Text style={AppStyle.textRegular}>Random read</Text>
             <Ionicons name='book-outline' size={20} color={iconColor} />
         </Pressable>
@@ -40,7 +56,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             <Ionicons name='logo-github' size={20} color={iconColor} />
         </Pressable>
     </View>
-  )
+    )
 }
 
 export default LateralMenu

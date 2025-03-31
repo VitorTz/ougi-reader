@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Manhwa } from '@/models/Manhwa'
 import { getItemGridDimensions, hp, wp } from '@/helpers/util'
 import { FlashList } from '@shopify/flash-list'
 import { AppConstants } from '@/constants/AppConstants'
 import ManhwaCover from './ManhwaCover'
+import { Colors } from '@/constants/Colors'
 
 
 interface ManhwaGridProps {
@@ -12,10 +13,13 @@ interface ManhwaGridProps {
     paddingHorizontal: number
     gap: number
     numColumns?: number
-    shouldScrollToTopWhenManhwasChange?: boolean    
+    shouldScrollToTopWhenManhwasChange?: boolean
+    loading?: boolean
+    hasResults?: boolean
+    onEndReached?: () => void
 }
 
-const ManhwaGrid = ({manhwas, shouldScrollToTopWhenManhwasChange = false, paddingHorizontal = wp(5), gap = 10, numColumns = 1}: ManhwaGridProps) => {    
+const ManhwaGrid = ({manhwas, onEndReached, loading, hasResults, shouldScrollToTopWhenManhwasChange = false, paddingHorizontal = wp(5), gap = 10, numColumns = 1}: ManhwaGridProps) => {    
 
     const ref = useRef<FlashList<Manhwa>>()
     const {width, height} = getItemGridDimensions(
@@ -43,7 +47,20 @@ const ManhwaGrid = ({manhwas, shouldScrollToTopWhenManhwasChange = false, paddin
                 numColumns={numColumns}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => <ManhwaCover width={width} height={height} marginBottom={6} manhwa={item} />}
-                estimatedItemSize={300}/>
+                estimatedItemSize={AppConstants.ManhwaCoverDimension.height + 180}
+                ListFooterComponent={
+                    <>
+                        {
+                            loading && hasResults &&
+                            <View style={{width: '100%', paddingVertical: 22, alignItems: "center", justifyContent: "center"}} >
+                                <ActivityIndicator size={32} color={Colors.white} />
+                            </View> 
+                        }
+                    </>
+                }
+                onEndReached={onEndReached}
+                scrollEventThrottle={4}
+                onEndReachedThreshold={1}/>
         </View>
     )
 }

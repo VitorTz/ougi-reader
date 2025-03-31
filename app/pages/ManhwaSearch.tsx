@@ -1,9 +1,11 @@
 import { StyleSheet, SafeAreaView, Text, View } from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
+import { debounce } from 'lodash'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
 import { wp } from '@/helpers/util'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { AppConstants } from '@/constants/AppConstants'
 import SearchBar from '@/components/SearchBar'
 import { Manhwa } from '@/models/Manhwa'
 import { fetchManhwaByName, fetchMostViewedManhwas } from '@/lib/supabase'
@@ -14,9 +16,9 @@ import ManhwaGrid from '@/components/ManhwaGrid'
 
 const SearchManhwa = () => {
 
-    const context = useContext(GlobalContext)
-    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const context = useContext(GlobalContext)    
     const [hasResults, setHasResults] = useState(true)
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {
         await fetchMostViewedManhwas()
@@ -49,11 +51,13 @@ const SearchManhwa = () => {
                 <ReturnButton/>
             </TopBar>
             <SearchBar handleSearch={handleSearch}/>
-            {
-                !hasResults ?
-                <Text style={AppStyle.textHeader}>No results</Text> :
-                <ManhwaGrid manhwas={manhwas} gap={10} paddingHorizontal={wp(5)} />
-            }
+            <ManhwaGrid 
+                manhwas={manhwas} 
+                gap={10} 
+                paddingHorizontal={wp(5)}
+                loading={false}
+                hasResults={hasResults}
+                />
         </SafeAreaView>
     )
 }

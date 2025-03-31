@@ -1,16 +1,72 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, Session } from '@supabase/supabase-js'
 import { Manhwa } from '@/models/Manhwa'
 import { Chapter } from '@/models/Chapter'
 import { ChapterImage } from '@/models/Image'
+import { AppState } from 'react-native'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indldnl2eWx3c2ZjeGdidXFhd3V1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMwMTUyMDMsImV4cCI6MjA1ODU5MTIwM30.EXGkpsPue5o2OD5WOpu4IfOZEgqo3FYKV2QDLNW7P6g'
-const MANHWAS_PER_PAGE = 30
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
 
+export const supabase = createClient(supabaseUrl, supabaseKey as any, {
+    auth: {
+      storage: AsyncStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
+});
+
+
+AppState.addEventListener(
+'change', (state) => {  
+    if (state === 'active') {    
+        supabase.auth.startAutoRefresh()  
+    } else {    
+        supabase.auth.stopAutoRefresh()
+    }
+}
+)
+
+
+export async function getSession(): Promise<Session | null> {
+    const {data: {session}} = await supabase.auth.getSession()    
+    return session
+}
+
+export async function fetchUser(): Promise<{username: string, image_url: string | null} | null> {
+    const session = await getSession()
+
+    if (!session) {
+        return null
+    }
+    const {data, error } = await supabase
+        .from("users")
+        .select("username, image_url")
+        .eq("user_id", session.user.id)
+        .single()
+
+    return data
+}
+
+
+export async function fetchBookmarkStatus(p_manhwa_id: number): Promise<boolean | null> {    
+
+    const session = await getSession()
+    if (!session) { return null }
+
+    const { data, error } = await supabase
+        .rpc('toggle_user_bookmark', { p_user_id: session.user.id, p_manhwa_id });
+    
+    if (error) {
+        console.log(error)
+        return false
+    }    
+    return data
+}
 
 export async function fetchLastUpdatedManhwas(
     p_offset: number = 0, 
@@ -31,7 +87,7 @@ export async function fetchMostViewedManhwas(
     p_offset: number = 0, 
     p_limit: number = 30, 
     p_num_chapters: number = 3
-) {
+): Promise<Manhwa[]> {
     const { data, error } = await supabase
         .rpc('get_manhwas_ordered_by_views', { p_offset, p_limit, p_num_chapters });
     
@@ -40,6 +96,24 @@ export async function fetchMostViewedManhwas(
         return []
     }    
     return data
+}
+
+
+export async function fetchUserBookmarks(): Promise<Map<number, Manhwa>> {
+    const m = new Map()
+    const session = await getSession()
+    if (!session) { return m }
+
+    const { data, error } = await supabase
+        .rpc('get_user_bookmarked_manhwas', { p_user_id: session.user.id });
+    
+    if (error) {
+        console.log(error)
+        return m
+    }
+
+    data.forEach((item: Manhwa) => m.set(item.manhwa_id, item))    
+    return m
 }
 
 export async function fetchManhwaGenres(manhwa_id: number, genreMap: Map<number, string[]>): Promise<string[]> {
@@ -126,25 +200,25 @@ export async function fetchManhwaByName(
 }
 
 export async function fetchManhwaByAuthor(
-    author_id: number,
+    p_author_id: number,
     authorMap: Map<number, Manhwa[]>,
     p_offset: number = 0,
     p_limit: number = 30,
     p_num_chapters: number = 3
 ): Promise<Manhwa[]> {
-    if (authorMap.has(author_id)) {        
-        return authorMap.get(author_id)!
+    if (authorMap.has(p_author_id)) {        
+        return authorMap.get(p_author_id)!
     }
     
     const { data, error } = await supabase
-        .rpc('get_manhwas_by_author', { p_offset, p_limit, p_num_chapters });
+        .rpc('get_manhwas_by_author', { p_offset, p_limit, p_num_chapters, p_author_id });
 
     if (error) {
         console.log(error)
         return []
     }
     
-    authorMap.set(author_id, data)
+    authorMap.set(p_author_id, data)
     return data
 }
 

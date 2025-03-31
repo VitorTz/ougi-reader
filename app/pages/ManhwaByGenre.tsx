@@ -1,6 +1,7 @@
 import { StyleSheet, SafeAreaView, Text, View } from 'react-native'
 import TopBar from '@/components/TopBar'
 import { hp, wp } from '@/helpers/util'
+import { debounce } from 'lodash'
 import { Colors } from '@/constants/Colors'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
@@ -9,17 +10,45 @@ import { Manhwa } from '@/models/Manhwa'
 import { fetchManhwaByGenre } from '@/lib/supabase'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/style/AppStyles'
+import { AppConstants } from '@/constants/AppConstants'
+
+
+var page = 0
 
 const ManhwaByGenre = () => {
 
-    const [manhwas, setManhwas] = useState<Manhwa[]>([])
     const params = useLocalSearchParams()
     const genre: string = params.genre as any
-    console.log(genre)
+
+    const [starting, setStarting] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [hasResults, setHasResults] = useState(true)
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    
     const init = async () => {
-        await fetchManhwaByGenre(genre)
+        page = 0
+        await fetchManhwaByGenre(genre, 0, AppConstants.MANHWAS_PER_PAGE)
             .then(values => setManhwas([...values]))
+        setStarting(false)
     }
+
+    const updateManhwas = async () => {
+        if (!hasResults) { return }
+        setLoading(true)
+        page += 1
+        console.log(page * AppConstants.MANHWAS_PER_PAGE)
+        await fetchManhwaByGenre(genre, page * AppConstants.MANHWAS_PER_PAGE, AppConstants.MANHWAS_PER_PAGE)
+            .then(values => {
+                setHasResults(values.length > 0)
+                setManhwas(prev => [...prev, ...values])}
+            )
+        setLoading(false)
+    }
+    
+    const debounceUpdate = useCallback(
+        debounce(updateManhwas, 400),
+        []
+    )
 
     useEffect(
         useCallback(() => {
@@ -33,7 +62,16 @@ const ManhwaByGenre = () => {
             <TopBar title={genre}>
                 <ReturnButton/>
             </TopBar>
-            <ManhwaGrid manhwas={manhwas} gap={10} paddingHorizontal={wp(5)} />
+            {
+                !starting &&
+                <ManhwaGrid 
+                    manhwas={manhwas} 
+                    gap={10} 
+                    paddingHorizontal={wp(5)} 
+                    onEndReached={debounceUpdate} 
+                    loading={loading}
+                    hasResults={hasResults}/>
+            }
         </SafeAreaView>
     )
 }

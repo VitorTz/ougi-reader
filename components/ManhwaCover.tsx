@@ -1,36 +1,20 @@
 import { ActivityIndicator, Falsy, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import { Image } from 'expo-image';
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppConstants } from '@/constants/AppConstants';
 import { AppStyle } from '@/style/AppStyles';
 import { Chapter } from '@/models/Chapter';
 import { router } from 'expo-router';
 import { GlobalContext } from '@/helpers/context';
-import { fetchManhwaChapterList, updateManhwaViews } from '@/lib/supabase';
+import { fetchBookmarkStatus, fetchManhwaChapterList, getSession, updateManhwaViews } from '@/lib/supabase';
 import ManhwaStatusComponent from './ManhwaStatusComponent';
 import { Colors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { formatTimestamp } from '@/helpers/util';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Toast from './Toast';
 
-
-interface ManhwaCoverProps {
-    manhwa: Manhwa
-}
-
-
-const coverWidth: number = AppConstants.ManhwaCoverDimension.width
-const coverHeight: number = AppConstants.ManhwaCoverDimension.height
-
-
-interface ManhwaCoverProps {
-    manhwa: Manhwa
-    width?: number
-    height?: number
-    marginRight?: number
-    marginBottom?: number
-    styleProp?: StyleProp<ViewStyle>
-}
 
 
 const ChapterLink = ({manhwa, chapter}: {manhwa: Manhwa, chapter: Chapter}) => {
@@ -52,7 +36,7 @@ const ChapterLink = ({manhwa, chapter}: {manhwa: Manhwa, chapter: Chapter}) => {
         <Pressable onPress={onPress} style={styles.chapterLink} >
             {
                 loading ? 
-                <ActivityIndicator size={20} color={'black'} /> :
+                <ActivityIndicator size={20} color={Colors.white} /> :
                 <>
                     <Text style={AppStyle.textRegular}>Chapter {chapter.chapter_num}</Text>
                     <Text style={AppStyle.textRegular}>{formatTimestamp(chapter.created_at)}</Text>
@@ -61,6 +45,78 @@ const ChapterLink = ({manhwa, chapter}: {manhwa: Manhwa, chapter: Chapter}) => {
         </Pressable>
     )
 }
+
+
+const Bookmark = ({manhwa}: {manhwa: Manhwa}) => {
+
+    const context = useContext(GlobalContext)
+    const [status, setStatus] = useState(context.user_bookmarks.has(manhwa.manhwa_id))
+    const [loading, setLoading] = useState(false)    
+    const iconName = status == true ? 'bookmark' : 'bookmark-outline'
+    
+    useEffect(() => {
+        setStatus(context.user_bookmarks.has(manhwa.manhwa_id));
+    }, [context.user_bookmarks, manhwa.manhwa_id]);
+
+
+    const addOrRemoveFromContext = (status: boolean) => {
+        if (status) {
+            context.user_bookmarks.set(manhwa.manhwa_id, manhwa)
+        } else {
+            context.user_bookmarks.delete(manhwa.manhwa_id)
+        }
+    }
+    
+    const toggleBookmark = async () => {        
+        const session = await getSession()
+        if (!session) {
+            Toast.show({title: "Error", message: "You are not logged", type: "error"})
+            return
+        }
+        setLoading(true)
+        await fetchBookmarkStatus(manhwa.manhwa_id)
+            .then(value => {
+                if (value) {
+                    setStatus(value)
+                    addOrRemoveFromContext(value!)
+                }
+                }
+            )
+        setLoading(false)
+    }
+
+    return (
+        <Pressable 
+            onPress={toggleBookmark}
+            style={{
+                position: 'absolute',
+                right: 10,
+                top: 10,
+                padding: 8,
+                backgroundColor: Colors.accentColor,
+                borderRadius: 32
+            }} >
+            {
+                loading ?
+                <ActivityIndicator size={20} color={Colors.white} /> :
+                <Ionicons name={iconName} size={20} color={Colors.white}/>
+            }
+        </Pressable>
+    )
+}
+
+
+interface ManhwaCoverProps {
+    manhwa: Manhwa
+    width?: number
+    height?: number
+    marginRight?: number
+    marginBottom?: number
+    styleProp?: StyleProp<ViewStyle>
+}
+
+const coverWidth: number = AppConstants.ManhwaCoverDimension.width
+const coverHeight: number = AppConstants.ManhwaCoverDimension.height
 
 const ManhwaCover = ({
     manhwa, 
@@ -77,7 +133,7 @@ const ManhwaCover = ({
         updateManhwaViews(manhwa.manhwa_id)
         context.manhwa = manhwa
         router.navigate("/pages/ManhwaPage")
-    }
+    }    
 
     return (
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
@@ -103,6 +159,7 @@ const ManhwaCover = ({
             }} >
                 <Text style={[AppStyle.textRegular, {fontSize: 12, color: 'white'}]}>{manhwa.status}</Text>
             </View>
+            <Bookmark manhwa={manhwa} />
         </Pressable>
     )
 }

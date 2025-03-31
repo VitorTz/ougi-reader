@@ -86,7 +86,7 @@ const ManhwaPage = () => {
                     <HomeButton/>
                     <ReturnButton onPress={onReturn}/>                    
                 </View>
-                <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: wp(8)}}>
+                <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
                     {
                         Platform.OS === 'web' ? 
                         <View style={{flexDirection: 'row', gap: 20, alignItems: "flex-end", justifyContent: "flex-start"}} >  

@@ -1,25 +1,41 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { Manhwa } from '@/models/Manhwa'
-import React, { useCallback, useEffect, useState } from 'react'
-import { fetchMostViewedManhwas } from '@/lib/supabase'
+import React, { useCallback, useContext, useState } from 'react'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
-import { router } from 'expo-router'
+import { fetchMostViewedManhwas } from '@/lib/supabase'
+import { router, useFocusEffect } from 'expo-router'
+import { GlobalContext } from '@/helpers/context'
+import { StyleSheet } from 'react-native'
+import { Manhwa } from '@/models/Manhwa'
+
+
+
+const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
 
 
 const MostViewedManhwasComponent = () => {
 
+    const context = useContext(GlobalContext)
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {        
-        await fetchMostViewedManhwas()
-            .then(values => setManhwas([...values]))
+        const lastTime: number | null = context.most_view_manhwas.last_update
+        const currentTime: number = new Date().getTime()        
+        if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {
+            console.log("updating most views manhwas")
+            context.most_view_manhwas.last_update = currentTime
+            await fetchMostViewedManhwas()
+                .then(values => {
+                context.most_view_manhwas.mawnhas = values
+                setManhwas([...values])}
+            )
+        } else {
+            setManhwas([...context.most_view_manhwas.mawnhas])
+        }
     }
 
-    useEffect(
+    useFocusEffect(
         useCallback(() => {
             init()
-        }, []),
-        []
+        }, [])
     )
 
     const onPress = () => {

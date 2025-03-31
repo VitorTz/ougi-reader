@@ -16,5 +16,6 @@ export const AppConstants = {
         right: 20,
         top: 20,
         bottom: 20
-    }
+    },
+    MANHWAS_PER_PAGE: 30
 }

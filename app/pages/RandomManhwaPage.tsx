@@ -57,7 +57,7 @@ const RandomManhwaPage = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title="Random Order">
+      <TopBar title="Random Order 🎲">
         <View style={{ flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center" }}>
           <Pressable onPress={handlePress} style={{ padding: 6, borderRadius: 32, backgroundColor: Colors.accentColor }}>
             <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
