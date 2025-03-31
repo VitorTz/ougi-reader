@@ -8,12 +8,21 @@ import { router } from 'expo-router'
 
 const HomeButton = () => {
   return (
-    <Pressable onPress={() => router.replace('/')} hitSlop={AppConstants.hitSlopLarge} style={{padding: 6, borderRadius: 32, backgroundColor: Colors.black}} >
-        <Ionicons name='home' size={22} color={'white'} />
+    <Pressable 
+      onPress={() => router.replace('/')} 
+      hitSlop={AppConstants.hitSlopLarge} 
+      style={styles.container} >
+        <Ionicons name='home' size={20} color={Colors.white} />
     </Pressable>
   )
 }
 
 export default HomeButton
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    padding: 7, 
+    borderRadius: 32, 
+    backgroundColor: Colors.accentColor
+  }
+})

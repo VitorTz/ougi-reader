@@ -15,7 +15,7 @@ const ManhwaByGenre = () => {
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
     const params = useLocalSearchParams()
     const genre: string = params.genre as any
-
+    console.log(genre)
     const init = async () => {
         await fetchManhwaByGenre(genre)
             .then(values => setManhwas([...values]))

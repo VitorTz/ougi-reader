@@ -6,17 +6,19 @@ import { wp } from "@/helpers/util";
 export const AppStyle = StyleSheet.create({
     textRegular: {
         fontSize: 16,
-        color: Colors.black
+        color: 'white',
+        fontFamily: 'LeagueSpartan_400Regular'
     },
     textHeader: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: Colors.black
+        fontSize: 26,
+        color: 'white',
+        fontFamily: 'LeagueSpartan_400Regular'
     },
     textLink: {
-        fontSize: 14,
-        color: "#1e1e1e",
-        textDecorationLine: "underline"
+        fontSize: 16,
+        color: Colors.white,
+        textDecorationLine: "underline",
+        fontFamily: 'LeagueSpartan_400Regular'
     },
     safeArea: {
         width: '100%', 

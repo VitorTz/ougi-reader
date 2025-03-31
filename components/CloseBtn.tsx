@@ -16,7 +16,7 @@ const CloseBtn = ({onPress, style}: CloseBtnProps) => {
     <Pressable
         onPress={onPress}
         hitSlop={AppConstants.hitSlopLarge}
-        style={[{padding: 6, borderRadius: 32, backgroundColor: Colors.black}, style]}>
+        style={[styles.container, style]}>
         <Ionicons name='close' size={22} color={'white'} />
     </Pressable>
   )
@@ -24,4 +24,10 @@ const CloseBtn = ({onPress, style}: CloseBtnProps) => {
 
 export default CloseBtn
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    padding: 6, 
+    borderRadius: 32, 
+    backgroundColor: Colors.accentColor
+  }
+})

@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Image } from 'expo-image'
 import { hp, wp } from '@/helpers/util'
 import { ChapterImage } from '@/models/Image'
+import { Colors } from '@/constants/Colors'
 
 interface ManhwaImageProps {
     image: ChapterImage
@@ -19,7 +20,7 @@ const ManhwaImage = ({image}: ManhwaImageProps) => {
 
     return (
         <View style={{width, height, alignSelf: "center"}} >
-            <ActivityIndicator size={32} color={'black'} style={{top: 64, display: loading ? 'flex' : 'none'}} />
+            <ActivityIndicator size={32} color={Colors.white} style={{top: 64, display: loading ? 'flex' : 'none'}} />
             <Image
                 onLoadStart={() => setLoading(true)}
                 onLoadEnd={() => setLoading(false)}

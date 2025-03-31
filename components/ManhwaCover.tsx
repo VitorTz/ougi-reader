@@ -84,22 +84,22 @@ const ManhwaCover = ({
             <Image 
                 source={manhwa.cover_image_url} 
                 contentFit='cover' 
-                style={[{borderTopLeftRadius: 4, borderTopRightRadius: 4, width, height}]}
+                style={[{borderRadius: 22, width, height}]}
             />
-            <View style={[styles.container, {backgroundColor: manhwa.color}]} >
-                <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
+            <View style={styles.container} >
+                <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {manhwa.chapters && manhwa.chapters.map(
                     (item) => <ChapterLink key={item.chapter_num} manhwa={manhwa} chapter={item} />
                 )}                
             </View>
             <View style={{
                 position: 'absolute', 
-                left: 4, 
-                top: 4, 
-                paddingHorizontal: 6, 
+                left: 10, 
+                top: 10, 
+                paddingHorizontal: 10, 
                 paddingVertical: 8, 
                 backgroundColor: manhwa.status == "Completed" ? Colors.accentColor : "#C87E6A", 
-                borderRadius: 4
+                borderRadius: 22
             }} >
                 <Text style={[AppStyle.textRegular, {fontSize: 12, color: 'white'}]}>{manhwa.status}</Text>
             </View>
@@ -113,15 +113,14 @@ const styles = StyleSheet.create({
     container: {
         padding: 10,        
         width: '100%',        
-        gap: 10,
-        backgroundColor: "#ABD1B5",
+        gap: 10,        
         borderTopWidth: 2,
         borderBottomLeftRadius: 4,
         borderBottomRightRadius: 4        
     },
-    chapterLink: {        
-        paddingHorizontal: 10, 
+    chapterLink: {
         paddingVertical: 8, 
+        paddingHorizontal: 10,
         borderRadius: 4,
         backgroundColor: Colors.backgroundColor,
         flexDirection: 'row',

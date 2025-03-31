@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState, useCallback, useRef } from 'react'
 import { debounce } from 'lodash'
+import { Colors } from '@/constants/Colors'
 
 interface SearchBarProps {
     handleSearch: (searchTerm: string) => void
@@ -20,6 +21,7 @@ const SearchBar = ({handleSearch}: SearchBarProps) => {
             <TextInput                
                 ref={inpuRef as any}
                 placeholder='search'
+                placeholderTextColor={Colors.white}
                 style={styles.input}                
                 onChangeText={debounceSearch}
             />
@@ -33,8 +35,10 @@ const styles = StyleSheet.create({
     input: {
         width: '100%', 
         height: '100%', 
+        color: Colors.white,
         paddingHorizontal: 10,
         borderWidth: 1,
-        borderRadius: 4
+        borderRadius: 4,
+        borderColor: Colors.white
     }
 })

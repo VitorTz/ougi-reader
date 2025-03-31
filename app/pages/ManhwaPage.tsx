@@ -80,12 +80,8 @@ const ManhwaPage = () => {
 
     return (
         <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>
-            <ScrollView style={{flex: 1}} >
-                <LinearGradient
-                    // Background Linear Gradient
-                    colors={[manhwa.color, Colors.backgroundColor]}
-                    style={styles.background}
-                />
+            <ScrollView style={{flex: 1}} >                
+                <LinearGradient colors={[manhwa.color, Colors.backgroundColor]} style={styles.background} />
                 <View style={{marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
                     <HomeButton/>
                     <ReturnButton onPress={onReturn}/>                    
@@ -102,8 +98,8 @@ const ManhwaPage = () => {
                             </View>
                         </View> :
                         <>
-                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
                             <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
+                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
                             <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
                             <ManhwaInfo manhwa={manhwa} />
                         </>
@@ -124,6 +120,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         top: 0,
-        height: hp(120)
+        height: hp(80)
     }
 })

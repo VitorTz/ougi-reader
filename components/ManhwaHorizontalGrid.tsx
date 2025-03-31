@@ -31,7 +31,7 @@ const ManhwaHorizontalGrid = ({title, manhwas, onPress}: ManhwaHorizontalGridPro
                     </Pressable>
                 }
             </View>
-            <View style={{alignItems: 'flex-start', height: height + 220, width: '100%'}}>
+            <View style={{alignItems: 'flex-start', height: height + 180, width: '100%'}}>
                 <FlashList                    
                     data={manhwas}
                     horizontal={true}

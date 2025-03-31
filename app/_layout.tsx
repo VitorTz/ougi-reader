@@ -32,6 +32,7 @@ const _layout = () => {
             <Stack.Screen name='pages/LastUpdatePage' options={{headerShown: false}} />
             <Stack.Screen name='pages/MostViewPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/RandomManhwaPage' options={{headerShown: false}} />
+            <Stack.Screen name='pages/AccountPage' options={{headerShown: false}} />
         </Stack>
       </View>
     </GlobalContext.Provider>

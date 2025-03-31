@@ -3,11 +3,14 @@ import { AppStyle } from '@/style/AppStyles'
 import CloseBtn from './CloseBtn'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { Colors } from '@/constants/Colors'
 
 
 interface LateralMenuProps {
     closeMenu: () => void
 }
+
+const iconColor = Colors.white
 
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
   return (
@@ -18,23 +21,23 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         </View>
         <Pressable style={styles.link} >
             <Text style={AppStyle.textRegular}>Account</Text>
-            <Ionicons name='person' size={20} color={'black'} />
+            <Ionicons name='person-outline' size={20} color={iconColor} />
         </Pressable>
         <Pressable style={styles.link} >
             <Text style={AppStyle.textRegular}>Bookmarks</Text>
-            <Ionicons name='bookmarks' size={20} color={'black'} />
+            <Ionicons name='bookmarks-outline' size={20} color={iconColor} />
         </Pressable>
         <Pressable style={styles.link} >
             <Text style={AppStyle.textRegular}>Random read</Text>
-            <Ionicons name='book' size={20} color={'black'} />
+            <Ionicons name='book-outline' size={20} color={iconColor} />
         </Pressable>
         <Pressable style={styles.link} >
             <Text style={AppStyle.textRegular}>Read history</Text>
-            <Ionicons name='reader' size={20} color={'black'} />
+            <Ionicons name='reader-outline' size={20} color={iconColor} />
         </Pressable>
         <Pressable onPress={() => Linking.openURL("https://github.com/VitorTz/ougi-reader")} style={styles.link} >
             <Text style={AppStyle.textRegular}>Github</Text>
-            <Ionicons name='logo-github' size={20} color={'black'} />
+            <Ionicons name='logo-github' size={20} color={iconColor} />
         </Pressable>
     </View>
   )

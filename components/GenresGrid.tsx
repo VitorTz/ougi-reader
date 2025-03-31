@@ -5,6 +5,7 @@ import { fetchGenres } from '@/lib/supabase'
 import { AppStyle } from '@/style/AppStyles'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/Colors'
+import Item from './Item'
 
 
 const GenreItem = ({genre}: {genre: string}) => {
@@ -43,7 +44,11 @@ const GenresGrid = () => {
             <FlatList
                 data={genres}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => <GenreItem genre={item} />}
+                renderItem={({item}) => <Item 
+                    text={item} 
+                    onPress={() => router.navigate({pathname: "/pages/ManhwaByGenre", params: {genre: item}})} 
+                    backgroundColor={Colors.gray}
+                    style={{marginRight: 6}}/>}
                 horizontal={true}
             />
         </View>
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10, 
         paddingVertical: 12, 
         marginRight: 10, 
-        backgroundColor: Colors.accentColor, 
+        backgroundColor: Colors.gray,
         alignItems: "center", 
         justifyContent: "center", 
         borderRadius: 4

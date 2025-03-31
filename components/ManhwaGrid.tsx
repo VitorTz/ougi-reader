@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Manhwa } from '@/models/Manhwa'
 import { getItemGridDimensions, hp, wp } from '@/helpers/util'
 import { FlashList } from '@shopify/flash-list'
@@ -12,10 +12,12 @@ interface ManhwaGridProps {
     paddingHorizontal: number
     gap: number
     numColumns?: number
+    shouldScrollToTopWhenManhwasChange?: boolean    
 }
 
-const ManhwaGrid = ({manhwas, paddingHorizontal = wp(5), gap = 10, numColumns = 1}: ManhwaGridProps) => {    
+const ManhwaGrid = ({manhwas, shouldScrollToTopWhenManhwasChange = false, paddingHorizontal = wp(5), gap = 10, numColumns = 1}: ManhwaGridProps) => {    
 
+    const ref = useRef<FlashList<Manhwa>>()
     const {width, height} = getItemGridDimensions(
         paddingHorizontal,
         gap,
@@ -24,9 +26,19 @@ const ManhwaGrid = ({manhwas, paddingHorizontal = wp(5), gap = 10, numColumns = 
         AppConstants.ManhwaCoverDimension.height
     )
 
+    useEffect(
+        () => {            
+            if (shouldScrollToTopWhenManhwasChange) {
+                ref.current?.scrollToOffset({animated: false, offset: 0})
+            }
+        },
+        [manhwas]
+    )
+
     return (
         <View style={{width: '100%', flex: 1, marginBottom: 10}} >
-            <FlashList
+            <FlashList        
+                ref={ref as any}
                 data={manhwas}
                 numColumns={numColumns}
                 keyExtractor={(item, index) => index.toString()}

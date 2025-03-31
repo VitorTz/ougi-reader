@@ -15,9 +15,9 @@ const ReturnButton = ({onPress}: ReturnButtonProps) => {
     const p = onPress ? onPress : () => router.back()
 
     return (
-    <Pressable onPress={p} hitSlop={AppConstants.hitSlop} style={{padding: 6, borderRadius: 32, backgroundColor: Colors.black}} >
-        <Ionicons name='arrow-back-outline' size={22} color={'white'}/>
-    </Pressable>
+        <Pressable onPress={p} hitSlop={AppConstants.hitSlop} style={{padding: 6, borderRadius: 32, backgroundColor: Colors.accentColor}} >
+            <Ionicons name='arrow-back-outline' size={22} color={Colors.white}/>
+        </Pressable>
     )
 }
 

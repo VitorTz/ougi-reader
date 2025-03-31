@@ -7,7 +7,8 @@ import {
     ActivityIndicator, 
     FlatList,    
     KeyboardAvoidingView,
-    Platform    
+    Platform,    
+    ScrollView
 } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { AppConstants } from '@/constants/AppConstants'
@@ -36,24 +37,26 @@ interface ChaperHeaderProps {
 
 const ChapterPageHeader = ({manhwa_name, chapter, loading, leftChapter, rightChapter, onReturn}: ChaperHeaderProps) => {
     return (
-        <View style={{backgroundColor: 'white', paddingHorizontal: wp(5), paddingTop: 40, paddingBottom: 20, gap: 20}} >            
-            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
-                <Text style={AppStyle.textHeader}>{manhwa_name}</Text>            
+        <View style={styles.pageHeader} >
+            <View style={{width: '100%', flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}} >
+                <Text style={[AppStyle.textHeader, {maxWidth: '80%'}]}>{manhwa_name}</Text>            
                 <ReturnButton onPress={onReturn} />            
             </View>
             <View style={{flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
-                <Text style={[AppStyle.textHeader, {alignSelf: "flex-start"}]}>Chapter</Text>                
-                <Pressable onPress={leftChapter}> 
-                        <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
-                </Pressable>
-                {
-                    loading ?
-                    <ActivityIndicator size={18} color={Colors.black} /> :
-                    <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
-                }
-                <Pressable onPress={rightChapter}>
-                    <Ionicons name='chevron-forward-outline' size={20} color={Colors.black} />
-                </Pressable>
+                <Text style={AppStyle.textHeader}>Chapter</Text>
+                <View style={{flexDirection: 'row', alignItems: "center", gap: 10, alignSelf: 'flex-end'}} >
+                    <Pressable onPress={leftChapter}> 
+                        <Ionicons name='chevron-back-outline' size={22} color='white' />
+                    </Pressable>
+                    {
+                        loading ?
+                        <ActivityIndicator size={18} color={Colors.white} /> :
+                        <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
+                    }
+                    <Pressable onPress={rightChapter}>
+                        <Ionicons name='chevron-forward-outline' size={20} color='white' />
+                    </Pressable>
+                </View>
             </View>
         </View>
     )
@@ -68,14 +71,15 @@ interface ChapterPageFooterProps {
 
 const ChapterPageFooter = ({chapter, leftChapter, rightChapter}: ChapterPageFooterProps) => {
     return (
-        <View style={{width: '100%', gap: 20, paddingHorizontal: wp(5), alignItems: "center", justifyContent: "center", marginBottom: 300}} >
-            <View style={{width: '100%', gap: 10, flexDirection: 'row', alignItems: "center"}} >
+        <View style={styles.pageFooter} >
+            <View style={{width: '100%', gap: 10, flexDirection: 'row', justifyContent: "center", alignItems: "center"}} >
+                <Text style={AppStyle.textHeader}>Chapter </Text>
                 <Pressable onPress={leftChapter}> 
-                    <Ionicons name='chevron-back-outline' size={22} color={Colors.black} />
+                    <Ionicons name='chevron-back-outline' size={22} color='white' />
                 </Pressable>                
                 <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
                 <Pressable onPress={rightChapter}>
-                    <Ionicons name='chevron-forward-outline' size={22} color={Colors.black} />
+                    <Ionicons name='chevron-forward-outline' size={22} color='white' />
                 </Pressable>
             </View>            
         </View>
@@ -132,24 +136,48 @@ const ChapterPage = () => {
         flashListRef.current?.scrollToOffset({animated: false, offset: 0})
     }
 
+    const scrollDown = () => {
+        flashListRef.current?.scrollToEnd({animated: false})
+    }
+
     const onReturn = () => {        
         context.chapter_index = null
         router.back()
     }
+    let totalHeight = 0
+    images.forEach(item => totalHeight += item.height)
+    const mediumHeight = images.length > 0 ? totalHeight / images.length : 512
 
     return (
-        <SafeAreaView style={[AppStyle.safeArea, {backgroundColor: 'white', padding: 0}]}>            
-            <FlatList
-                ref={flashListRef as any}                    
-                nestedScrollEnabled={true}
-                initialNumToRender={1}
-                ListHeaderComponent={<ChapterPageHeader manhwa_name={context.manhwa!.title} chapter={chapter!} loading={loading} leftChapter={leftChapter} rightChapter={rightChapter} onReturn={onReturn} />}
-                ListFooterComponent={<ChapterPageFooter chapter={chapter!} leftChapter={leftChapter} rightChapter={rightChapter} />}
-                data={images}
-                keyExtractor={(item: ChapterImage, index: number) => index.toString()}
-                renderItem={({item}) => <ManhwaImage image={item} />}/>
+        <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>            
+            <ScrollView style={{flex: 1}} >
+                <ChapterPageHeader 
+                    manhwa_name={context.manhwa!.title} 
+                    chapter={chapter!} 
+                    loading={loading} 
+                    leftChapter={leftChapter} 
+                    rightChapter={rightChapter} 
+                    onReturn={onReturn} />
+                <View style={{width: '100%', height: hp(100)}} >
+                    <FlashList                        
+                        ref={flashListRef as any}                    
+                        nestedScrollEnabled={true}
+                        estimatedItemSize={mediumHeight}
+                        estimatedListSize={{width: wp(100), height: totalHeight}}
+                        data={images}
+                        keyExtractor={(item: ChapterImage, index: number) => index.toString()}
+                        renderItem={({item}) => <ManhwaImage image={item} />}/>
+                </View>
+                <ChapterPageFooter 
+                    chapter={chapter!} 
+                    leftChapter={leftChapter} 
+                    rightChapter={rightChapter} />
+            </ScrollView>
             <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
                 <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+            </Pressable>
+            <Pressable onPress={scrollDown} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowDown} >
+                <Ionicons name='arrow-down-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
             </Pressable>
         </SafeAreaView>
     )
@@ -164,8 +192,16 @@ const styles = StyleSheet.create({
         right: 10, 
         padding: 6, 
         borderRadius: 32, 
-        backgroundColor: 'rgba(255, 255, 255, 0.7)'
+        backgroundColor: 'rgba(255, 255, 255, 0.5)'
     },    
+    arrowDown: {
+        position: 'absolute', 
+        bottom: 20, 
+        right: 60, 
+        padding: 6, 
+        borderRadius: 32, 
+        backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    },
     commentInput: {
         width: '100%',
         height: hp(14),
@@ -173,5 +209,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 4,
         verticalAlign: 'top'
+    },
+    pageHeader: {
+        backgroundColor: Colors.almostBlack, 
+        paddingHorizontal: wp(5), 
+        paddingTop: 40, 
+        paddingBottom: 20, 
+        gap: 20
+    },
+    pageFooter: {
+        width: '100%', 
+        gap: 20, 
+        paddingHorizontal: wp(5), 
+        alignItems: "center", 
+        justifyContent: "center", 
+        marginTop: 80,
+        marginBottom: 300
     }
 })

@@ -72,9 +72,9 @@ export async function fetchManhwaByGenre(
     p_offset: number = 0, 
     p_limit: number = 30, 
     p_num_chapters: number = 3
-): Promise<Manhwa[]> {    
+): Promise<Manhwa[]> {
     const { data, error } = await supabase
-        .rpc('get_manhwas_by_genre', { p_offset, p_limit, p_num_chapters, p_genre });
+        .rpc('get_manhwas_by_genre', { p_genre, p_offset, p_limit, p_num_chapters });
     
     if (error) {
         console.log(error)
@@ -174,7 +174,7 @@ export async function fetchManhwaAuthors(manhwa_id: number, authorMap: Map<numbe
 export async function fetchManhwaChapterList(manhwa_id: number): Promise<Chapter[]> {
     const { data, error } = await supabase
         .from("chapters")
-        .select("chapter_id, manhwa_id, chapter_num")
+        .select("chapter_id, manhwa_id, chapter_num, created_at")
         .eq("manhwa_id", manhwa_id)
         .order("chapter_num", {ascending: true})        
         .overrideTypes<Chapter[]>()    

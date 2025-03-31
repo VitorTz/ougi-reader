@@ -9,6 +9,7 @@ import { router, useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { AppConstants } from '@/constants/AppConstants'
+import { formatTimestamp } from '@/helpers/util'
 
 
 interface ChapterListProps {
@@ -32,22 +33,21 @@ const ChapterItem = ({chapter, index}: {chapter: Chapter, index: number}) => {
         context.chapter_index = index
         router.navigate("/pages/ChapterPage")
     }
-
+    
     return (
         <Pressable 
             onPress={onPress}
             style={{
                 width: 48,
                 height: 48,
-                marginBottom: 10, 
-                justifyContent: "center",                 
                 borderRadius: 4,
-                alignItems: "center", 
-                borderWidth: 1,                
-                backgroundColor: isReaded ? Colors.accentColor : 'none',
-                borderColor: isReaded ? Colors.accentColor : Colors.black
+                justifyContent: "center",                 
+                alignItems: "center",                         
+                backgroundColor: isReaded ? Colors.white : Colors.accentColor,
+                borderColor: isReaded ? Colors.accentColor : 'white',
+                flexDirection: 'row'                                
             }}>
-            <Text style={AppStyle.textRegular}>{chapter.chapter_num}</Text>
+            <Text style={[AppStyle.textRegular, {color: isReaded ? Colors.almostBlack : 'white'}]}>{chapter.chapter_num}</Text>            
         </Pressable>
     )
 }
@@ -78,7 +78,7 @@ const ChapterList = ({manhwa_id}: ChapterListProps) => {
     return (
         <View style={{width: '100%', gap: 20}} >
             <Text style={AppStyle.textHeader}>Chapters</Text>            
-            <View style={{width: '100%', columnGap: 10, flexDirection: 'row', justifyContent: "center", flexWrap: 'wrap'}} >
+            <View style={{width: '100%', gap: 10, flexDirection: 'row', justifyContent: "center", flexWrap: 'wrap'}} >
                 {
                     chapters.map(
                         (item, index) => <ChapterItem key={item.chapter_id} index={index} chapter={item} />

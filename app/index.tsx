@@ -1,4 +1,5 @@
 import { 
+  ActivityIndicator,
   Animated,   
   Pressable, 
   SafeAreaView, 
@@ -19,9 +20,33 @@ import GenresGrid from '@/components/GenresGrid'
 import ManhwaRandomComponent from '@/components/ManhwaRandomComponent'
 import LateralMenu from '@/components/LateralMenu'
 import { wp } from '@/helpers/util'
+import {
+  useFonts,
+  LeagueSpartan_100Thin,
+  LeagueSpartan_200ExtraLight,
+  LeagueSpartan_300Light,
+  LeagueSpartan_400Regular,
+  LeagueSpartan_500Medium,
+  LeagueSpartan_600SemiBold,
+  LeagueSpartan_700Bold,
+  LeagueSpartan_800ExtraBold,
+  LeagueSpartan_900Black,
+} from '@expo-google-fonts/league-spartan';
 
 
 const index = () => {
+
+  let [fontsLoaded] = useFonts({
+    LeagueSpartan_100Thin,
+    LeagueSpartan_200ExtraLight,
+    LeagueSpartan_300Light,
+    LeagueSpartan_400Regular,
+    LeagueSpartan_500Medium,
+    LeagueSpartan_600SemiBold,
+    LeagueSpartan_700Bold,
+    LeagueSpartan_800ExtraBold,
+    LeagueSpartan_900Black,
+  });
   
   const context = useContext(GlobalContext)
 
@@ -67,32 +92,38 @@ const index = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-      <TopBar title='Manhwa Reader'>
-        <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-          <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
-            <Ionicons name='search-outline' size={28} color={Colors.black} />
-          </Pressable>
-          <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlopLarge} >
-            <Ionicons name='options-outline' size={28} color={Colors.black} />
-          </Pressable>
-        </View>
-      </TopBar>
-      <ScrollView style={{width: '100%'}} >
-        <View style={{flex: 1, gap: 20}}>
-          <GenresGrid/>
-          <ManhwaLastUpdatedComponent/>
-          <MostViewedManhwasComponent/>
-          <ManhwaRandomComponent/>
-        </View>
-      </ScrollView>
-      {/* Menu Lateral */}
       {
-      menuVisible && (
-        <Animated.View style={[styles.sideMenu, { width: menuWidth, transform: [{ translateX: menuAnim }] }]}>
-          <LateralMenu closeMenu={closeMenu}/>
-        </Animated.View>
-      )
-      }
+        !fontsLoaded ? 
+        <ActivityIndicator size={32} color={'white'} /> :
+        <>
+          <TopBar title='Manhwa Reader'>
+            <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+              <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
+                <Ionicons name='search-outline' size={28} color={'white'} />
+              </Pressable>
+              <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlopLarge} >
+                <Ionicons name='options-outline' size={28} color={'white'} />
+              </Pressable>
+            </View>
+          </TopBar>
+          <ScrollView style={{width: '100%'}} >
+            <View style={{flex: 1, gap: 20}}>
+              <GenresGrid/>
+              <MostViewedManhwasComponent/>
+              <ManhwaLastUpdatedComponent/>
+              <ManhwaRandomComponent/>
+            </View>
+          </ScrollView>
+          {/* Menu Lateral */}
+          {
+          menuVisible && (
+            <Animated.View style={[styles.sideMenu, { width: menuWidth, transform: [{ translateX: menuAnim }] }]}>
+              <LateralMenu closeMenu={closeMenu}/>
+            </Animated.View>
+          )
+          }
+        </>
+        }
     </SafeAreaView>
   )
 }
