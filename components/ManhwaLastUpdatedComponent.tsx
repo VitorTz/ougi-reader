@@ -41,7 +41,7 @@ const ManhwaLastUpdatedComponent = () => {
         <ManhwaHorizontalGrid 
             title='Latest Releases 🔥' 
             manhwas={manhwas} 
-            onPress={() => router.navigate("/pages/LastUpdatePage")}/>
+            onPress={() => router.navigate("/pages/LatestReleasePage")}/>
     )
 }
 

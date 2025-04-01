@@ -61,8 +61,7 @@ export default ChapterLink
 
 const styles = StyleSheet.create({
     chapterLink: {
-        paddingVertical: 8, 
-        paddingHorizontal: 10,
+        paddingVertical: 8,        
         borderRadius: 4,
         backgroundColor: Colors.backgroundColor,
         flexDirection: 'row',

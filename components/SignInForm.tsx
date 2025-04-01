@@ -122,7 +122,7 @@ const SignInForm = () => {
             </Pressable>
         <View style={{flexDirection: "row", marginTop: 20, gap: 4}} >
             <Text style={{color: Colors.white, fontSize: 14}} >Don't Have an Account?</Text> 
-            <Pressable onPress={() => router.replace("/pages/SignUpPage")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
+            <Pressable onPress={() => router.replace("/(auth)/SignUpPage")}  hitSlop={{left: 10, top: 10, bottom: 10, right: 10}} >
                 <Text style={{textDecorationLine: "underline", fontWeight: "bold", color: Colors.white, fontSize: 14}} >Sign Up</Text> 
             </Pressable>
         </View>

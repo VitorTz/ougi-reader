@@ -18,7 +18,7 @@ const AccountPage = () => {
 
   const init = async () => {
     if (context.session == null) {
-      router.navigate("/pages/SignPage")
+      router.navigate("/(auth)/SignInPage")
     } else {
       setStarting(false)
     }

@@ -106,7 +106,7 @@ const ReadingHistoryPage = () => {
         <TopBar title="Reading History">
             <ReturnButton/>
         </TopBar>
-        <View style={{width: '100%', height: hp(100), paddingVertical: 20}} >
+        <View style={{flex: 1, paddingBottom: hp(2)}} >
             <FlashList
                 data={manhwas}
                 keyExtractor={(item, index) => index.toString()}

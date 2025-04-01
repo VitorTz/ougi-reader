@@ -62,7 +62,12 @@ const ManhwaCover = ({
             <View style={styles.container} >
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {showChaptersPreview && manhwa.chapters && manhwa.chapters.map(
-                    (item) => <ChapterLink shouldShowChapterDate={shouldShowChapterDate} key={item.chapter_num} manhwa={manhwa} chapter={item} />
+                    (item) => 
+                        <ChapterLink 
+                            shouldShowChapterDate={shouldShowChapterDate} 
+                            key={item.chapter_num} 
+                            manhwa={manhwa} 
+                            chapter={item} />
                 )}                
             </View>
             <ManhwaStatusComponent
@@ -85,9 +90,9 @@ export default ManhwaCover
 
 const styles = StyleSheet.create({    
     container: {
-        padding: 10,        
+        paddingVertical: 10,  
         width: '100%',        
-        gap: 10,        
+        
         borderTopWidth: 2,
         borderBottomLeftRadius: 4,
         borderBottomRightRadius: 4        
