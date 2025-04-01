@@ -11,7 +11,12 @@ interface ItemProps {
     onPress?: () => void
 }
 
-const Item = ({text, backgroundColor = Colors.accentColor, style, onPress}: ItemProps) => {
+const Item = ({
+  text, 
+  backgroundColor = Colors.accentColor, 
+  style, 
+  onPress
+}: ItemProps) => {
   return (
     <Pressable onPress={onPress} style={[styles.container, {backgroundColor}, style]} >
       <Text style={AppStyle.textRegular}>{text}</Text>

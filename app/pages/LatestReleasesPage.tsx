@@ -1,15 +1,14 @@
-import { StyleSheet, Text, SafeAreaView, View } from 'react-native'
-import TopBar from '@/components/TopBar'
-import ReturnButton from '@/components/ReturnButton'
-import { wp } from '@/helpers/util'
-import SearchBar from '@/components/SearchBar'
-import { AppStyle } from '@/style/AppStyles'
-import ManhwaGrid from '@/components/ManhwaGrid'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Manhwa } from '@/models/Manhwa'
 import { fetchLastUpdatedManhwas } from '@/lib/supabase'
+import { StyleSheet, SafeAreaView } from 'react-native'
+import ReturnButton from '@/components/ReturnButton'
+import ManhwaGrid from '@/components/ManhwaGrid'
+import { AppStyle } from '@/style/AppStyles'
+import TopBar from '@/components/TopBar'
+import { Manhwa } from '@/models/Manhwa'
 
-const LastUpdatePage = () => {
+
+const LatestReleasesPage = () => {
 
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
@@ -30,11 +29,14 @@ const LastUpdatePage = () => {
         <TopBar title="Latest Releases 🔥">
             <ReturnButton/>
         </TopBar>
-        <ManhwaGrid manhwas={manhwas} gap={10} paddingHorizontal={wp(5)} />        
+        <ManhwaGrid 
+            manhwas={manhwas} 
+            numColumns={2} 
+            shouldShowChapterDate={false}/>
     </SafeAreaView>
     )
 }
 
-export default LastUpdatePage
+export default LatestReleasesPage
 
 const styles = StyleSheet.create({})

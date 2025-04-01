@@ -4,8 +4,15 @@ import { AppStyle } from '@/style/AppStyles'
 import React from 'react'
 import { router } from 'expo-router'
 
+interface GenreComponentProps {
+    genre: string
+    color?: string
+}
 
-const GenreComponent = ({genre, color}: {genre: string, color: string}) => {
+const GenreComponent = ({
+    genre, 
+    color = Colors.accentColor
+}: GenreComponentProps) => {
 
     const onPress = () => {
         router.navigate({pathname: "/pages/ManhwaByGenre", params: {"genre": genre}})

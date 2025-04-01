@@ -1,10 +1,11 @@
-import { createClient, Session } from '@supabase/supabase-js'
+import { createClient, PostgrestError, Session } from '@supabase/supabase-js'
 import { Manhwa } from '@/models/Manhwa'
 import { Chapter } from '@/models/Chapter'
 import { ChapterImage } from '@/models/Image'
 import { AppState } from 'react-native'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GlobalContextProps } from '@/helpers/context'
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
@@ -52,6 +53,84 @@ export async function fetchUser(): Promise<{username: string, image_url: string 
     return data
 }
 
+export async function fetchUserBookmarks(): Promise<Map<number, Manhwa>> {
+    const m = new Map()
+    const session = await getSession()
+    if (!session) { return m }
+
+    const { data, error } = await supabase
+        .rpc('get_user_bookmarked_manhwas', { p_user_id: session.user.id });
+    
+    if (error) {
+        console.log(error)
+        return m
+    }
+
+    data.forEach((item: Manhwa) => m.set(item.manhwa_id, item))
+    return m
+}
+
+export async function fetchUserReadingHistory(): Promise<Set<number>> {
+    
+    const m = new Set<number>()
+    const session = await getSession()
+
+    if (!session) { return m }
+    
+    const { data, error } = await supabase
+        .from("reading_history")
+        .select("chapter_id")
+        .eq("user_id", session.user.id)
+
+    if (error) {
+        console.log("erro fetch reading history", error)
+        return m
+    }
+
+    data.forEach(item => m.add(item.chapter_id))
+    return m
+}
+
+export async function initUser(context: GlobalContextProps) {
+    context.session = await getSession()
+    context.user = await fetchUser()
+    context.chapter_readed = await fetchUserReadingHistory()
+    context.user_bookmarks = await fetchUserBookmarks()
+}
+
+
+export async function fetchUserCompleteReadingHistory(): Promise<Manhwa[]> {
+    const session = await getSession()
+    if (!session) { return [] }
+    const { data, error } = await supabase
+        .rpc('get_user_manhwa_chapters', { p_user_id: session.user.id });
+    
+    if (error) {
+        console.log("error update user reading history", error)
+        return []
+    }
+
+    return data
+}
+
+
+export async function updateUserReadingHistory(
+    p_chapter_id: number, 
+    p_manhwa_id: number    
+): Promise<boolean> {
+    const session = await getSession()
+    if (!session) { return false }
+    const { error } = await supabase
+        .rpc('upsert_reading_history', { p_user_id: session.user.id, p_chapter_id, p_manhwa_id });
+    
+    if (error) {
+        console.log("error update user reading history", error)
+        return false
+    }
+    
+    return true
+}
+
 
 export async function fetchBookmarkStatus(p_manhwa_id: number): Promise<boolean | null> {    
 
@@ -96,24 +175,6 @@ export async function fetchMostViewedManhwas(
         return []
     }    
     return data
-}
-
-
-export async function fetchUserBookmarks(): Promise<Map<number, Manhwa>> {
-    const m = new Map()
-    const session = await getSession()
-    if (!session) { return m }
-
-    const { data, error } = await supabase
-        .rpc('get_user_bookmarked_manhwas', { p_user_id: session.user.id });
-    
-    if (error) {
-        console.log(error)
-        return m
-    }
-
-    data.forEach((item: Manhwa) => m.set(item.manhwa_id, item))    
-    return m
 }
 
 export async function fetchManhwaGenres(manhwa_id: number, genreMap: Map<number, string[]>): Promise<string[]> {

@@ -19,17 +19,18 @@ const MostViewedManhwasComponent = () => {
     const init = async () => {        
         const lastTime: number | null = context.most_view_manhwas.last_update
         const currentTime: number = new Date().getTime()        
-        if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {
-            console.log("updating most views manhwas")
+        if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {            
             context.most_view_manhwas.last_update = currentTime
             await fetchMostViewedManhwas()
                 .then(values => {
                 context.most_view_manhwas.mawnhas = values
                 setManhwas([...values])}
             )
+            return
         } else {
             setManhwas([...context.most_view_manhwas.mawnhas])
         }
+        
     }
 
     useFocusEffect(

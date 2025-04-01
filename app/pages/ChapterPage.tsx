@@ -15,7 +15,7 @@ import React, {
     useState 
 } from 'react'
 import { GestureHandlerRootView, PanGestureHandler, PanGestureHandlerStateChangeEvent, State } from 'react-native-gesture-handler';
-import { fetchChapterImages, fetchRandomManhwa } from '@/lib/supabase'
+import { fetchChapterImages, fetchRandomManhwa, updateUserReadingHistory } from '@/lib/supabase'
 import ManhwaHorizontalGrid from '@/components/ManhwaHorizontalGrid'
 import { AppConstants } from '@/constants/AppConstants'
 import ReturnButton from '@/components/ReturnButton'
@@ -40,7 +40,6 @@ interface ChaperHeaderProps {
     onReturn: () => void
 }
 
-type SwipeDirection = 'left' | 'right';
 
 const ChapterPageHeader = ({manhwa_name, chapter, loading, leftChapter, rightChapter, onReturn}: ChaperHeaderProps) => {
     return (
@@ -92,7 +91,7 @@ const ChapterPageFooter = ({chapter, manhwas, loading, leftChapter, rightChapter
                 </Pressable>
             </View>         
             {
-                loading &&                
+                !loading &&
                 <View style={{width: '100%', height: 400}} >
                     <ManhwaHorizontalGrid  
                         manhwas={manhwas}
@@ -121,13 +120,16 @@ const ChapterPage = () => {
         context.chapter_readed.add(newChapter.chapter_id)
         setChapter(newChapter)
         
-        await fetchChapterImages(
-            newChapter.chapter_id,
-            context.chapter_images            
-        ).then(values => setImages([...values]))
+        await fetchChapterImages(newChapter.chapter_id, context.chapter_images)
+            .then(values => setImages([...values]))
 
-        await fetchRandomManhwa(0, 5, 3)
-            .then(values => setRandomManhwas([...values]))
+        await updateUserReadingHistory(newChapter.chapter_id, context.manhwa!.manhwa_id)
+            .then(value => value ? context.chapter_readed.add(newChapter.chapter_id) : null)
+
+        if (randomManhwas.length == 0) {
+            await fetchRandomManhwa(0, 13, 3)
+                .then(values => setRandomManhwas([...values]))
+        }
 
         setLoading(false)
     }
@@ -165,71 +167,43 @@ const ChapterPage = () => {
         context.chapter_index = null
         router.back()
     }    
-    
-    const handleSwipe = async (direction: SwipeDirection) => {
-        switch (direction) {
-            case 'left':
-                await rightChapter()
-                break
-            case 'right':
-                await leftChapter()
-                break
-            default:
-                break
-        }
-    };
-    
-    const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
-        if (event.nativeEvent.oldState === State.ACTIVE) {
-            const { translationX } = event.nativeEvent;
-            const threshold = 50;
-            if (translationX > threshold) {
-                handleSwipe('right');
-            } else if (translationX < -threshold) {
-                handleSwipe('left');
-            }                
-        }
-    };
 
-    return (        
-            <GestureHandlerRootView>
-                <PanGestureHandler onHandlerStateChange={onHandlerStateChange} >                    
-                    <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>
-                        <View style={{width: '100%'}} >
-                            <FlatList
-                                ref={flashListRef as any}
-                                ListHeaderComponent={
-                                    <ChapterPageHeader 
-                                        manhwa_name={context.manhwa!.title} 
-                                        chapter={chapter!} 
-                                        loading={loading} 
-                                        leftChapter={leftChapter} 
-                                        rightChapter={rightChapter} 
-                                        onReturn={onReturn} />
-                                }
-                                ListFooterComponent={
-                                    <ChapterPageFooter
-                                        loading={loading}
-                                        manhwas={randomManhwas} 
-                                        chapter={chapter!} 
-                                        leftChapter={leftChapter} 
-                                        rightChapter={rightChapter}/>
-                                }
-                                nestedScrollEnabled={true}
-                                initialNumToRender={1}
-                                data={images}
-                                keyExtractor={(item: ChapterImage, index: number) => index.toString()}
-                                renderItem={({item}) => <ManhwaImage image={item} />}/>
-                        </View>                            
-                        <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
-                            <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
-                        </Pressable>
-                        <Pressable onPress={scrollDown} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowDown} >
-                            <Ionicons name='arrow-down-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
-                        </Pressable>
-                    </SafeAreaView>
-                </PanGestureHandler>
-            </GestureHandlerRootView>
+    return (                    
+            <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>                        
+                <View style={{width: '100%'}} >
+                    <FlatList
+                        ref={flashListRef as any}
+                        scrollEnabled={true}
+                        ListHeaderComponent={
+                            <ChapterPageHeader 
+                                manhwa_name={context.manhwa!.title} 
+                                chapter={chapter!} 
+                                loading={loading} 
+                                leftChapter={leftChapter} 
+                                rightChapter={rightChapter} 
+                                onReturn={onReturn} />
+                        }
+                        ListFooterComponent={
+                            <ChapterPageFooter
+                                loading={loading}
+                                manhwas={randomManhwas} 
+                                chapter={chapter!} 
+                                leftChapter={leftChapter} 
+                                rightChapter={rightChapter}/>
+                        }
+                        nestedScrollEnabled={true}
+                        initialNumToRender={1}
+                        data={images}
+                        keyExtractor={(item: ChapterImage, index: number) => index.toString()}
+                        renderItem={({item}) => <ManhwaImage image={item} />}/>
+                </View>
+                <Pressable onPress={scrollUp} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowUp} >
+                    <Ionicons name='arrow-up-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+                </Pressable>
+                <Pressable onPress={scrollDown} hitSlop={AppConstants.hitSlopLarge} style={styles.arrowDown} >
+                    <Ionicons name='arrow-down-outline' size={20} color={'rgba(0, 0, 0, 0.6)'} />
+                </Pressable>
+            </SafeAreaView>
     )
 }
 

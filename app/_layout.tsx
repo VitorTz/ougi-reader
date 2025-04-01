@@ -36,14 +36,15 @@ const _layout = () => {
             <Stack.Screen name='pages/ManhwaByGenre' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaByAuthor' options={{headerShown: false}} />
             <Stack.Screen name='pages/ManhwaSearch' options={{headerShown: false}} />
-            <Stack.Screen name='pages/LastUpdatePage' options={{headerShown: false}} />
+            <Stack.Screen name='pages/LatestReleasesPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/MostViewPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/RandomManhwaPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/AccountPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/Home' options={{headerShown: false}} />
-            <Stack.Screen name='pages/SignPage' options={{headerShown: false}} />  
-            <Stack.Screen name='pages/SignUpPage' options={{headerShown: false}} />  
+            <Stack.Screen name='(auth)/SignInPage' options={{headerShown: false}} />  
+            <Stack.Screen name='(auth)/SignUpPage' options={{headerShown: false}} />  
             <Stack.Screen name='pages/BookmarkPage' options={{headerShown: false}} />  
+            <Stack.Screen name='pages/ReadingHistoryPage' options={{headerShown: false}} />  
         </Stack>
         <Toast.Component/>
       </View>

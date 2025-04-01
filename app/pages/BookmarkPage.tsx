@@ -1,5 +1,5 @@
 import { StyleSheet, SafeAreaView, Text, View } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import TopBar from '@/components/TopBar'
 import ReturnButton from '@/components/ReturnButton'
 import ManhwaGrid from '@/components/ManhwaGrid'
@@ -13,18 +13,19 @@ const BookmarkPage = () => {
     const context = useContext(GlobalContext)
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
+    useEffect(
+        useCallback(() => {
+            setManhwas([...Array.from(context.user_bookmarks.values())])
+        }, []),
+        []
+    )
+
     return (
         <SafeAreaView style={AppStyle.safeArea}>
-            <TopBar title="Most View ⚡">
+            <TopBar title="Bookmarks">
                 <ReturnButton/>
             </TopBar>            
-            <ManhwaGrid 
-                manhwas={manhwas} 
-                gap={10}                
-                paddingHorizontal={wp(5)}
-                loading={false}
-                hasResults={true}
-                />    
+            <ManhwaGrid manhwas={manhwas} numColumns={2}/>
         </SafeAreaView>
   )
 }

@@ -53,11 +53,8 @@ const SearchManhwa = () => {
             <SearchBar handleSearch={handleSearch}/>
             <ManhwaGrid 
                 manhwas={manhwas} 
-                gap={10} 
-                paddingHorizontal={wp(5)}
-                loading={false}
-                hasResults={hasResults}
-                />
+                shouldShowChapterDate={false} 
+                numColumns={2} />
         </SafeAreaView>
     )
 }

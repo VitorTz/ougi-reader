@@ -20,7 +20,7 @@ const RandomManhwaPage = () => {
 
   // Função que atualiza os manhwas
   const update = async () => {
-    await fetchRandomManhwa().then(values => setManhwas([...values]))
+    await fetchRandomManhwa(0, 30, 3).then(values => setManhwas([...values]))
   }
 
   // Função que dispara a animação de rotação
@@ -69,8 +69,8 @@ const RandomManhwaPage = () => {
       </TopBar>
       <ManhwaGrid 
         manhwas={manhwas} 
-        gap={10} 
-        paddingHorizontal={wp(5)} 
+        numColumns={2}
+        shouldShowChapterDate={false}
         shouldScrollToTopWhenManhwasChange={true} 
       />
     </SafeAreaView>

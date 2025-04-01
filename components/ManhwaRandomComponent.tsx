@@ -18,8 +18,7 @@ const ManhwaRandomComponent = () => {
     const init = async () => {        
             const lastTime: number | null = context.random_manhwas.last_update
             const currentTime: number = new Date().getTime()        
-            if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {
-                console.log("updating random manhwas")
+            if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {                
                 context.random_manhwas.last_update = currentTime
                 await fetchRandomManhwa()
                     .then(values => {

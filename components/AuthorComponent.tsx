@@ -6,7 +6,15 @@ import React from 'react'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 
 
-const AuthorComponent = ({author, color}: {author: ManhwaAuthor, color: string}) => {
+interface AuthorComponentProps {
+    author: ManhwaAuthor
+    color?: string
+}
+
+const AuthorComponent = ({
+    author, 
+    color = Colors.accentColor
+}: AuthorComponentProps) => {
   const onPress = () => {
           router.navigate({
               pathname: "/pages/ManhwaByAuthor", 

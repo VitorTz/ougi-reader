@@ -19,8 +19,7 @@ const ManhwaLastUpdatedComponent = () => {
     const init = async () => {            
             const lastTime: number | null = context.last_update_manhwas.last_update
             const currentTime: number = new Date().getTime()        
-            if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {
-                console.log("updating last release manhwas")
+            if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {                
                 context.last_update_manhwas.last_update = currentTime
                 await fetchLastUpdatedManhwas()
                     .then(values => {

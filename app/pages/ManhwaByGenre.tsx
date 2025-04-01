@@ -65,12 +65,12 @@ const ManhwaByGenre = () => {
             {
                 !starting &&
                 <ManhwaGrid 
-                    manhwas={manhwas} 
-                    gap={10} 
-                    paddingHorizontal={wp(5)} 
+                    manhwas={manhwas}
+                    numColumns={2}                    
                     onEndReached={debounceUpdate} 
                     loading={loading}
-                    hasResults={hasResults}/>
+                    hasResults={hasResults}
+                    shouldShowChapterDate={false}/>
             }
         </SafeAreaView>
     )

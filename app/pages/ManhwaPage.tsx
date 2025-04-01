@@ -3,8 +3,7 @@ import {
     ScrollView, 
     SafeAreaView, 
     Text, 
-    View, 
-    Pressable,
+    View,     
     Platform
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -24,9 +23,8 @@ import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AuthorComponent from '@/components/AuthorComponent'
 import { formatTimestamp, hp, wp } from '@/helpers/util';
 import Item from '@/components/Item';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { AppConstants } from '@/constants/AppConstants';
 import HomeButton from '@/components/HomeButton';
+import Bookmark from '@/components/Bookmark';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -52,16 +50,16 @@ const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
 
     return (
         <View style={{alignSelf: 'flex-start', gap: 10}}>
-            <View style={{flexDirection: 'row', gap: 10}} >
-                <ManhwaStatusComponent status={manhwa.status} borderRadius={4} />
-                <Item text={`updated at: ${formatTimestamp(manhwa.updated_at)}`} backgroundColor={Colors.accentColor} />
+            <View style={{flexDirection: 'row', gap: 10}} >                
+                <Item text={manhwa.status} backgroundColor={Colors.clayDust}/>
+                <Item text={`Updated at: ${formatTimestamp(manhwa.updated_at)}`}/>
             </View>
             <View style={{flexDirection: 'row', gap: 10, flexWrap: 'wrap'}} >
                 {
-                    genres.map(item => <GenreComponent key={item} genre={item} color={Colors.accentColor} />)
+                    genres.map(item => <GenreComponent key={item} genre={item}/>)
                 }
                 {
-                    authors.map(item => <AuthorComponent key={item.name} author={item} color={Colors.accentColor} />)
+                    authors.map(item => <AuthorComponent key={item.name} author={item}/>)
                 }
             </View>
         </View>
@@ -73,39 +71,30 @@ const ManhwaPage = () => {
     
     const context = useContext(GlobalContext)    
     const manhwa: Manhwa = context.manhwa!
-    
-    const onReturn = () => {
-        router.back()
-    }    
 
     return (
         <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>
             <ScrollView style={{flex: 1}} >                
-                <LinearGradient colors={[manhwa.color, Colors.backgroundColor]} style={styles.background} />
+                <LinearGradient 
+                    colors={[manhwa.color, Colors.backgroundColor]} 
+                    style={styles.linearBackground} />
+
                 <View style={{marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
                     <HomeButton/>
-                    <ReturnButton onPress={onReturn}/>                    
+                    <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+                        <Bookmark manhwa={manhwa}/>
+                        <ReturnButton/>
+                    </View>
                 </View>
+
                 <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
-                    {
-                        Platform.OS === 'web' ? 
-                        <View style={{flexDirection: 'row', gap: 20, alignItems: "flex-end", justifyContent: "flex-start"}} >  
-                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
-                            <View style={{width: '100%'}} >
-                                <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                                <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
-                                <ManhwaInfo manhwa={manhwa} />
-                            </View>
-                        </View> :
-                        <>
-                            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                            <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
-                            <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
-                            <ManhwaInfo manhwa={manhwa} />
-                        </>
-                    }                    
+                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
+                    <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
+                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
+                    <ManhwaInfo manhwa={manhwa} />
                     <ChapterList manhwa_id={manhwa.manhwa_id} />
-                </View> 
+                </View>
+
             </ScrollView>
         </SafeAreaView>
     )
@@ -114,7 +103,7 @@ const ManhwaPage = () => {
 export default ManhwaPage
 
 const styles = StyleSheet.create({
-    background: {
+    linearBackground: {
         position: 'absolute',
         width: wp(100),
         left: 0,

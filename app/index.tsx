@@ -17,7 +17,7 @@ import { hp, wp } from '@/helpers/util';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { GlobalContext } from '@/helpers/context';
-import { fetchUser, fetchUserBookmarks, getSession } from '@/lib/supabase';
+import { fetchUser, fetchUserBookmarks, getSession, initUser } from '@/lib/supabase';
 
 
 
@@ -38,11 +38,7 @@ const index = () => {
   });
 
   const init = async () => {
-    context.session = await getSession()
-    await fetchUserBookmarks()
-      .then(value => context.user_bookmarks = value)
-    await fetchUser()
-      .then(value => context.user = value)
+    await initUser(context)
     router.replace("/pages/Home")
   }
 

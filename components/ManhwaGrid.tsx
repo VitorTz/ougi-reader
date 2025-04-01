@@ -10,16 +10,27 @@ import { Colors } from '@/constants/Colors'
 
 interface ManhwaGridProps {
     manhwas: Manhwa[]
-    paddingHorizontal: number
-    gap: number
-    numColumns?: number
-    shouldScrollToTopWhenManhwasChange?: boolean
+    onEndReached?: () => void
     loading?: boolean
     hasResults?: boolean
-    onEndReached?: () => void
+    shouldScrollToTopWhenManhwasChange?: boolean
+    paddingHorizontal?: number
+    gap?: number
+    numColumns?: number
+    shouldShowChapterDate?: boolean
 }
 
-const ManhwaGrid = ({manhwas, onEndReached, loading, hasResults, shouldScrollToTopWhenManhwasChange = false, paddingHorizontal = wp(5), gap = 10, numColumns = 1}: ManhwaGridProps) => {    
+const ManhwaGrid = ({
+    manhwas, 
+    onEndReached, 
+    loading = false, 
+    hasResults = true,
+    shouldScrollToTopWhenManhwasChange = false,
+    paddingHorizontal = wp(5), 
+    gap = 10, 
+    numColumns = 1,
+    shouldShowChapterDate = true
+}: ManhwaGridProps) => {    
 
     const ref = useRef<FlashList<Manhwa>>()
     const {width, height} = getItemGridDimensions(
@@ -46,7 +57,7 @@ const ManhwaGrid = ({manhwas, onEndReached, loading, hasResults, shouldScrollToT
                 data={manhwas}
                 numColumns={numColumns}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item, index}) => <ManhwaCover width={width} height={height} marginBottom={6} manhwa={item} />}
+                renderItem={({item, index}) => <ManhwaCover shouldShowChapterDate={shouldShowChapterDate} width={width} height={height} marginBottom={6} manhwa={item} />}
                 estimatedItemSize={AppConstants.ManhwaCoverDimension.height + 180}
                 ListFooterComponent={
                     <>

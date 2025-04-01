@@ -29,29 +29,60 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.navigate({pathname: "/pages/ManhwaPage"})
     }
 
+    const accountPage = () => {
+        closeMenu()
+        router.navigate("/pages/AccountPage")
+    }
+
+    const bookmarkPage = () => {
+        closeMenu()
+        router.navigate("/pages/BookmarkPage")
+    }
+
+    const readingHistoryPage = () => {
+        closeMenu()
+        router.navigate("/pages/ReadingHistoryPage")
+    }
+
     return (
     <View style={styles.container} >
+        
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "space-between", marginBottom: 30}} >
             <Text style={AppStyle.textHeader}>Menu</Text>
             <CloseBtn onPress={closeMenu} style={{padding: 2}} />
         </View>
-        <Pressable onPress={() => router.navigate("/pages/AccountPage")} style={styles.link} >
+
+        <Pressable 
+            onPress={accountPage} 
+            style={styles.link} >
             <Text style={AppStyle.textRegular}>Account</Text>
             <Ionicons name='person-outline' size={20} color={iconColor} />
         </Pressable>
-        <Pressable style={styles.link} >
+
+        <Pressable 
+            onPress={bookmarkPage} 
+            style={styles.link} >
             <Text style={AppStyle.textRegular}>Bookmarks</Text>
             <Ionicons name='bookmarks-outline' size={20} color={iconColor} />
         </Pressable>
-        <Pressable onPress={randomRead} style={styles.link} >
+
+        <Pressable 
+            onPress={randomRead} 
+            style={styles.link} >
             <Text style={AppStyle.textRegular}>Random read</Text>
             <Ionicons name='book-outline' size={20} color={iconColor} />
         </Pressable>
-        <Pressable style={styles.link} >
+
+        <Pressable 
+            onPress={readingHistoryPage}
+            style={styles.link} >
             <Text style={AppStyle.textRegular}>Read history</Text>
             <Ionicons name='reader-outline' size={20} color={iconColor} />
         </Pressable>
-        <Pressable onPress={() => Linking.openURL("https://github.com/VitorTz/ougi-reader")} style={styles.link} >
+
+        <Pressable 
+            onPress={() => Linking.openURL("https://github.com/VitorTz/ougi-reader")} 
+            style={styles.link} >
             <Text style={AppStyle.textRegular}>Github</Text>
             <Ionicons name='logo-github' size={20} color={iconColor} />
         </Pressable>

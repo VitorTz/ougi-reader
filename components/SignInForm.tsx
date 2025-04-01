@@ -9,7 +9,7 @@ import {
     Text, 
     View 
 } from 'react-native'
-import { supabase, getSession, fetchUser, fetchUserBookmarks } from '@/lib/supabase';
+import { supabase, getSession, initUser } from '@/lib/supabase';
 import { useForm, Controller } from 'react-hook-form';
 import { Colors } from '@/constants/Colors';
 import { useContext, useState } from 'react'
@@ -31,6 +31,7 @@ const schema = yup.object().shape({
         .min(3, 'Password must be at least 3 characters')
         .required('Password is required'),  
 });
+
 
 interface FormData {
     email: string
@@ -61,28 +62,16 @@ const SignInForm = () => {
             email: form_data.email,
             password: form_data.password
         })
-    
 
         if (error) {
             Toast.show({title: "Error", message: error.message, type: "error"})        
             setLoading(false)
             return
         }
-            
-        const session = await getSession()
-        if (session) {  
-            context.session = session
-            context.user_bookmarks.clear()
-            await fetchUser()
-                .then(value => context.user = value)
-            await fetchUserBookmarks()
-                .then(value => context.user_bookmarks = value)
-            setLoading(false)
-            router.replace("/pages/Home")
-        } else {
-            Toast.show({title: "Error", message: "could not retrive login session", type: "error"})
-        }
-        setLoading(false)
+        
+        await initUser(context)
+        setLoading(false)        
+        router.replace("/pages/Home")
     };
 
   return (
