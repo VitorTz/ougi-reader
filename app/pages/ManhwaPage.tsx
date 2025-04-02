@@ -25,6 +25,7 @@ import { formatTimestamp, hp, wp } from '@/helpers/util';
 import Item from '@/components/Item';
 import HomeButton from '@/components/HomeButton';
 import Bookmark from '@/components/Bookmark';
+import ManhwaRating from '@/components/ManhwaRanking';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -90,6 +91,7 @@ const ManhwaPage = () => {
                 <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
                     <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
                     <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
+                    <ManhwaRating manhwa={manhwa} />
                     <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
                     <ManhwaInfo manhwa={manhwa} />
                     <ChapterList manhwa_id={manhwa.manhwa_id} />

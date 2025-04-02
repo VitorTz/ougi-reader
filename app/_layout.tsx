@@ -25,7 +25,8 @@ const _layout = () => {
         most_view_manhwas: {mawnhas: [], last_update: null},
         last_update_manhwas: {mawnhas: [], last_update: null},
         random_manhwas: {mawnhas: [], last_update: null},
-        user: null
+        user: null,
+        manhwa_rating: new Map()
     }} >
       <View style={{flex: 1, backgroundColor: Colors.backgroundColor}} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />

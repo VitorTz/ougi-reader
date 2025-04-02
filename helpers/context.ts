@@ -24,6 +24,7 @@ export interface GlobalContextProps {
     most_view_manhwas: {mawnhas: Manhwa[], last_update: number | null}
     last_update_manhwas: {mawnhas: Manhwa[], last_update: number | null}
     random_manhwas: {mawnhas: Manhwa[], last_update: number | null}
+    manhwa_rating: Map<number, number>
 }
 
 export const GlobalContext = React.createContext<GlobalContextProps>({
@@ -43,5 +44,6 @@ export const GlobalContext = React.createContext<GlobalContextProps>({
   user: null,
   most_view_manhwas: {mawnhas: [], last_update: null},
   last_update_manhwas: {mawnhas: [], last_update: null},
-  random_manhwas: {mawnhas: [], last_update: null}
+  random_manhwas: {mawnhas: [], last_update: null},
+  manhwa_rating: new Map()
 });

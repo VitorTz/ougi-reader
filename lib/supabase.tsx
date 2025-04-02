@@ -131,6 +131,36 @@ export async function updateUserReadingHistory(
     return true
 }
 
+export async function fetchManhwaRating(p_manhwa_id: number): Promise<number> {    
+    const session = await getSession()
+    if (!session) { return 0.0 }
+    const { data, error } = await supabase
+        .rpc('get_manhwa_average_rating', { p_manhwa_id });
+    
+    if (error) {
+        console.log("error fetch manhwa rating", p_manhwa_id, error)
+        return 0.0
+    }
+    
+    return data
+}
+
+
+export async function upsertManhwaRaring(p_manhwa_id: number, p_rating: number) {
+    const session = await getSession()
+    if (!session) { return false }    
+
+    const { data, error } = await supabase
+        .rpc('upsert_manhwa_rating', { p_manhwa_id, p_rating, p_user_id: session.user.id });
+    
+    if (error) {
+        console.log("error update manhwa rating", p_manhwa_id, error)
+        return 0.0
+    }
+    
+    return data
+}
+
 
 export async function fetchBookmarkStatus(p_manhwa_id: number): Promise<boolean | null> {    
 
