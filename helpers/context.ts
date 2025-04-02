@@ -4,7 +4,7 @@ import { Chapter } from '@/models/Chapter';
 import { ChapterImage } from '@/models/Image';
 import { ManhwaAuthor } from '@/models/ManhwaAuthor';
 import { Session } from '@supabase/supabase-js';
-
+import { RatingState } from './types';
 
 export interface GlobalContextProps {
     session: Session | null
@@ -24,7 +24,8 @@ export interface GlobalContextProps {
     most_view_manhwas: {mawnhas: Manhwa[], last_update: number | null}
     last_update_manhwas: {mawnhas: Manhwa[], last_update: number | null}
     random_manhwas: {mawnhas: Manhwa[], last_update: number | null}
-    manhwa_rating: Map<number, number>
+    manhwa_rating: Map<number, RatingState>,
+    manhwa_reading_status: Map<number, string | null>
 }
 
 export const GlobalContext = React.createContext<GlobalContextProps>({
@@ -45,5 +46,6 @@ export const GlobalContext = React.createContext<GlobalContextProps>({
   most_view_manhwas: {mawnhas: [], last_update: null},
   last_update_manhwas: {mawnhas: [], last_update: null},
   random_manhwas: {mawnhas: [], last_update: null},
-  manhwa_rating: new Map()
+  manhwa_rating: new Map(),
+  manhwa_reading_status: new Map()
 });

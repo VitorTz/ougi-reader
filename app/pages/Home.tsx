@@ -1,5 +1,6 @@
 import { 
   Animated,   
+  Easing,   
   Pressable, 
   SafeAreaView, 
   ScrollView, 
@@ -11,7 +12,7 @@ import React, {
     useRef, 
     useContext 
 } from 'react'
-import ManhwaLastUpdatedComponent from '@/components/ManhwaLastUpdatedComponent'
+import ManhwaLastReleasesComponent from '@/components/ManhwaLastUpdatedComponent'
 import MostViewedManhwasComponent from '@/components/ManhwasMostViewComponent'
 import ManhwaRandomComponent from '@/components/ManhwaRandomComponent'
 import { AppConstants } from '@/constants/AppConstants'
@@ -49,7 +50,7 @@ const Home = () => {
   const openMenu = () => {
     Animated.timing(menuAnim, {
       toValue: 0,
-      duration: 300,
+      duration: 500,      
       useNativeDriver: false
     }).start()
     setMenuVisible(true)
@@ -69,23 +70,30 @@ const Home = () => {
     menuVisible ? closeMenu() : openMenu()
   }
 
+  const openAccount = () => {
+    router.navigate("/pages/AccountPage")
+  }
+
   return (
     <SafeAreaView style={AppStyle.safeArea}>
         <TopBar title='Manhwa Reader'>
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
             <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
-            <Ionicons name='search-outline' size={28} color={'white'} />
+              <Ionicons name='search-outline' size={28} color={'white'} />
+            </Pressable>
+            <Pressable onPress={openAccount} hitSlop={AppConstants.hitSlopLarge} >
+              <Ionicons name='person-outline' size={28} color={'white'} />
             </Pressable>
             <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlopLarge} >
-            <Ionicons name='options-outline' size={28} color={'white'} />
+              <Ionicons name='options-outline' size={28} color={'white'} />
             </Pressable>
         </View>
         </TopBar>
         <ScrollView style={{width: '100%'}} >
         <View style={{flex: 1, gap: 20}}>
             <GenresGrid/>
+            <ManhwaLastReleasesComponent/>
             <MostViewedManhwasComponent/>
-            <ManhwaLastUpdatedComponent/>
             <ManhwaRandomComponent/>
         </View>
         </ScrollView>

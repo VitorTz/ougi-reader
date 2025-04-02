@@ -76,7 +76,7 @@ const ManhwaCover = ({
                 paddingHorizontal={10}
                 paddingVertical={8}
                 fontSize={12}
-                backgroundColor={manhwa.status == "Completed" ? Colors.accentColor : "#C87E6A"}
+                backgroundColor={manhwa.status == "Completed" ? Colors.backgroundColor : "#C87E6A"}
                 borderRadius={22}
             />
             <View style={{position: 'absolute', right: 10, top: 10}}>

@@ -17,5 +17,14 @@ export const AppConstants = {
         top: 20,
         bottom: 20
     },
-    MANHWAS_PER_PAGE: 30
+    MANHWAS_PER_PAGE: 30,
+    READING_STATUS: [
+        'Completed',
+        'Reading',
+        'On Hold',
+        'Dropped',
+        'Plan to Read',
+        'Re-Reading',
+        'None'
+    ]
 }

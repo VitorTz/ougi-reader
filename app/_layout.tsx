@@ -26,7 +26,8 @@ const _layout = () => {
         last_update_manhwas: {mawnhas: [], last_update: null},
         random_manhwas: {mawnhas: [], last_update: null},
         user: null,
-        manhwa_rating: new Map()
+        manhwa_rating: new Map(),
+        manhwa_reading_status: new Map()
     }} >
       <View style={{flex: 1, backgroundColor: Colors.backgroundColor}} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />
@@ -46,6 +47,7 @@ const _layout = () => {
             <Stack.Screen name='(auth)/SignUpPage' options={{headerShown: false}} />  
             <Stack.Screen name='pages/BookmarkPage' options={{headerShown: false}} />  
             <Stack.Screen name='pages/ReadingHistoryPage' options={{headerShown: false}} />  
+            <Stack.Screen name='pages/LibrayPage' options={{headerShown: false}} />  
         </Stack>
         <Toast.Component/>
       </View>

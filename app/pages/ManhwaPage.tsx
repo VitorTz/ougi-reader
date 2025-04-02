@@ -3,8 +3,7 @@ import {
     ScrollView, 
     SafeAreaView, 
     Text, 
-    View,     
-    Platform
+    View
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
@@ -14,9 +13,7 @@ import { Manhwa } from '@/models/Manhwa'
 import { Image } from 'expo-image'
 import { AppStyle } from '@/style/AppStyles'
 import ChapterList from '@/components/ChapterList'
-import { router } from 'expo-router'
 import { Colors } from '@/constants/Colors'
-import ManhwaStatusComponent from '@/components/ManhwaStatusComponent'
 import { fetchManhwaAuthors, fetchManhwaGenres } from '@/lib/supabase'
 import GenreComponent from '@/components/GenreComponent'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
@@ -25,7 +22,8 @@ import { formatTimestamp, hp, wp } from '@/helpers/util';
 import Item from '@/components/Item';
 import HomeButton from '@/components/HomeButton';
 import Bookmark from '@/components/Bookmark';
-import ManhwaRating from '@/components/ManhwaRanking';
+import ManhwaRating from '@/components/ManhwaRating';
+import AddToLibrary from '@/components/AddToLibrary';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -52,7 +50,7 @@ const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
     return (
         <View style={{alignSelf: 'flex-start', gap: 10}}>
             <View style={{flexDirection: 'row', gap: 10}} >                
-                <Item text={manhwa.status} backgroundColor={Colors.clayDust}/>
+                <Item text={manhwa.status} backgroundColor={Colors.orange}/>
                 <Item text={`Updated at: ${formatTimestamp(manhwa.updated_at)}`}/>
             </View>
             <View style={{flexDirection: 'row', gap: 10, flexWrap: 'wrap'}} >
@@ -89,11 +87,13 @@ const ManhwaPage = () => {
                 </View>
 
                 <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
+                    <Image source={manhwa.cover_image_url} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} />
                     <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                    <Image source={manhwa.cover_image_url} style={{width: 340, height: 480, borderRadius: 4}} />
                     <ManhwaRating manhwa={manhwa} />
+                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
                     <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
                     <ManhwaInfo manhwa={manhwa} />
+                    <AddToLibrary manhwa={manhwa} />
                     <ChapterList manhwa_id={manhwa.manhwa_id} />
                 </View>
 

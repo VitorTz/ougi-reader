@@ -11,7 +11,7 @@ import { router } from 'expo-router'
 const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
 
 
-const ManhwaLastUpdatedComponent = () => {
+const ManhwaLastReleasesComponent = () => {
 
     const context = useContext(GlobalContext)
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
@@ -41,10 +41,10 @@ const ManhwaLastUpdatedComponent = () => {
         <ManhwaHorizontalGrid 
             title='Latest Releases 🔥' 
             manhwas={manhwas} 
-            onPress={() => router.navigate("/pages/LatestReleasePage")}/>
+            onPress={() => router.navigate("/pages/LatestReleasesPage")}/>
     )
 }
 
-export default ManhwaLastUpdatedComponent
+export default ManhwaLastReleasesComponent
 
 const styles = StyleSheet.create({})

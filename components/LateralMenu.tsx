@@ -44,6 +44,11 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
         router.navigate("/pages/ReadingHistoryPage")
     }
 
+    const libraryPage = () => {
+        closeMenu()
+        router.navigate("/pages/LibrayPage")
+    }
+
     return (
     <View style={styles.container} >
         
@@ -57,6 +62,13 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             style={styles.link} >
             <Text style={AppStyle.textRegular}>Account</Text>
             <Ionicons name='person-outline' size={20} color={iconColor} />
+        </Pressable>
+
+        <Pressable 
+            onPress={libraryPage} 
+            style={styles.link} >
+            <Text style={AppStyle.textRegular}>Library</Text>
+            <Ionicons name='library-outline' size={20} color={iconColor} />
         </Pressable>
 
         <Pressable 

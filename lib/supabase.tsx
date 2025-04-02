@@ -131,22 +131,38 @@ export async function updateUserReadingHistory(
     return true
 }
 
-export async function fetchManhwaRating(p_manhwa_id: number): Promise<number> {    
+export async function fetchManhwaRating(p_manhwa_id: number): Promise<{rating: number, totalRatings: number}> {    
     const session = await getSession()
-    if (!session) { return 0.0 }
+    if (!session) { return  {rating: 0.0, totalRatings: 0.0 } }
     const { data, error } = await supabase
-        .rpc('get_manhwa_average_rating', { p_manhwa_id });
+        .rpc('get_manhwa_rating_stats', { p_manhwa_id });
     
     if (error) {
         console.log("error fetch manhwa rating", p_manhwa_id, error)
-        return 0.0
+        return { rating: 0.0, totalRatings: 0.0 }
     }
     
-    return data
+    return {rating: data[0].rating ? data[0].rating : 0.0, totalRatings: data[0].totalratings}
+}
+
+export async function fetchManhwaRatingExcludingUser(
+    p_manhwa_id: number
+): Promise<{rating: number, totalRatings: number}> {    
+    const session = await getSession()
+    if (!session) { return {rating: 0.0, totalRatings: 0} }
+    const { data, error } = await supabase
+        .rpc('get_average_rating_excluding_user', { p_manhwa_id, p_exclude_user_id: session.user.id });
+    
+    if (error) {
+        console.log("error fetch manhwa rating", p_manhwa_id, error)
+        return {rating: 0.0, totalRatings: 0}
+    }
+    
+    return {rating: data.avg_rating, totalRatings: data.total_ratings}
 }
 
 
-export async function upsertManhwaRaring(p_manhwa_id: number, p_rating: number) {
+export async function upsertManhwaRating(p_manhwa_id: number, p_rating: number) {
     const session = await getSession()
     if (!session) { return false }    
 
@@ -161,6 +177,55 @@ export async function upsertManhwaRaring(p_manhwa_id: number, p_rating: number) 
     return data
 }
 
+export async function fetchUserManhwaRating(manhwa_id: number): Promise<number | null> {
+    const session = await getSession()
+    if (!session) { return null }
+    
+    const { data, error } = await supabase
+        .from("manhwa_ratings")
+        .select("rating")
+        .eq("manhwa_id", manhwa_id)
+        .eq("user_id", session.user.id)
+        .single()
+    
+    if (error) {
+        if (error.code == 'PGRST116') { return null }
+        console.log("fetch user manhwa rating error", error)
+        return null
+    }
+
+    return data.rating
+}
+
+export async function fetchManhwaReadingStatus(manhwa_id: number): Promise<string | null> {
+    const session = await getSession()
+    if (!session) { return null }
+    const { data, error } = await supabase
+        .from("reading_status")
+        .select("status")
+        .eq("manhwa_id", manhwa_id)
+        .eq("user_id", session.user.id)
+        .single()
+    
+    if (error) {
+        console.log("fetch manhwa status error", error)
+        return null
+    }
+    return data.status
+}
+
+
+export async function upsertManhwaReadingStatus(p_manhwa_id: number, p_status: string) {    
+    const session = await getSession()
+    if (!session) { return }
+
+    const { error } = await supabase
+        .rpc('upsert_reading_status', { p_user_id: session.user.id, p_manhwa_id, p_status });
+    
+    if (error) {
+        console.log(error)
+    }
+}
 
 export async function fetchBookmarkStatus(p_manhwa_id: number): Promise<boolean | null> {    
 
