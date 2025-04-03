@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
 import React from 'react'
 import { AppConstants } from '@/constants/AppConstants'
 import Ionicons from '@expo/vector-icons/Ionicons'

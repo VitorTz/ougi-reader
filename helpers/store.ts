@@ -5,6 +5,7 @@ import { Session } from '@supabase/supabase-js'
 import { create }  from 'zustand'
 import { RatingRegister } from './types'
 import { Comment } from './types'
+import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 
 export type ReadingState = {
     manhwa: Manhwa | null
@@ -126,7 +127,7 @@ export const useReadingStatusState = create<ReadingStatusState>(
         addReadingStatus: (manhwa: Manhwa, status: string) => {set((state) => {
             const r = new Map(state.readingStatus)
             r.set(manhwa.manhwa_id, {manhwa, status})
-            return {...state, readingStatus :r}
+            return {...state, readingStatus: r}
         })},
         setReadingStatus: (r: Map<number, {manhwa: Manhwa, status: string}>) => (set((state) => {
             return {...state, readingStatus: r}
@@ -297,5 +298,56 @@ export const useManhwaCommentsState = create<ManhwaCommentsState>(
             return {...state, commentsMap: r}
         })}
         
+    })
+)
+
+type MangaAuthorsState = {
+    authorsMap: Map<number, ManhwaAuthor[]>
+    addAuthor: (manhwa_id: number, authors: ManhwaAuthor[]) => void
+}
+
+export const useMangaAuthorsState = create<MangaAuthorsState>(
+    (set) => ({
+        authorsMap: new Map(),
+        addAuthor: (manhwa_id: number, authors: ManhwaAuthor[]) => {set((state) => {
+            const r = new Map(state.authorsMap)
+            r.set(manhwa_id, authors)
+            return {...state, authorsMap: r}
+        })}
+    })
+)
+
+
+type ManhwaGenreState = {
+    genresMap: Map<number, string[]>
+    addGenre: (manhwa_id: number, genres: string[]) => void
+}
+
+
+export const useManhwaGenreState = create<ManhwaGenreState>(
+    (set) => ({
+        genresMap: new Map(),
+        addGenre: (manhwa_id: number, genres: string[]) => {set((state) => {
+            const r = new Map(state.genresMap)
+            r.set(manhwa_id, genres)
+            return {...state, genresMap: r}
+        })}
+    })
+)
+
+
+type ManhwaByAutorState = {
+    authorMap: Map<number, Manhwa[]>
+    addAuthor: (author_id: number, manhwas: Manhwa[]) => void
+}
+
+export const useManhwaByAutorState = create<ManhwaByAutorState>(
+    (set) => ({
+        authorMap: new Map(),
+        addAuthor: (author_id: number, manhwas: Manhwa[]) => {set((state) => {
+            const r = new Map(state.authorMap)
+            r.set(author_id, manhwas)
+            return {...state, authorMap: r}
+        })}
     })
 )

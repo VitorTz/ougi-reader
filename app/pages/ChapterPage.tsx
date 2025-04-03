@@ -9,19 +9,17 @@ import {
 } from 'react-native'
 import React, { 
     useCallback, 
-    useContext, 
     useEffect, 
     useRef, 
     useState 
 } from 'react'
-import { GestureHandlerRootView, PanGestureHandler, PanGestureHandlerStateChangeEvent, State } from 'react-native-gesture-handler';
+import { useChapterImageState, useReadingState, useReadingHistoryState } from '@/helpers/store';
 import { fetchChapterImages, fetchRandomManhwa, updateUserReadingHistory } from '@/lib/supabase'
 import ManhwaHorizontalGrid from '@/components/ManhwaHorizontalGrid'
 import { AppConstants } from '@/constants/AppConstants'
 import ReturnButton from '@/components/ReturnButton'
 import ManhwaImage from '@/components/ManhwaImage'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { GlobalContext } from '@/helpers/context'
 import { ChapterImage } from '@/models/Image'
 import { AppStyle } from '@/style/AppStyles'
 import { Colors } from '@/constants/Colors'
@@ -29,7 +27,6 @@ import { Chapter } from '@/models/Chapter'
 import { hp, wp } from '@/helpers/util'
 import { router } from 'expo-router'
 import { Manhwa } from '@/models/Manhwa'
-import { useChapterImageState, useReadingState, useReadingHistoryState } from '@/helpers/store';
 
 
 interface ChaperHeaderProps {    
@@ -113,7 +110,6 @@ const ChapterPage = () => {
     const { 
         manhwa,
         currentChapter,
-        chapterMap,
         moveToNextChapter, 
         moveToPreviousChapter,
     } = useReadingState()
@@ -121,25 +117,37 @@ const ChapterPage = () => {
     const { imageMap, addImages } = useChapterImageState()
 
     const [images, setImages] = useState<ChapterImage[]>([])
-    
+    const [listTotalHeight, setListTotalHeight] = useState(hp(100))
+    const [estimatedImageSize, setEstimatedImageSize] = useState(1024)
     const [randomManhwas, setRandomManhwas] = useState<Manhwa[]>([])
     const [loading, setLoading] = useState(false)    
 
-    const flashListRef = useRef<FlatList<ChapterImage>>()    
+    const flashListRef = useRef<FlatList<ChapterImage>>()           
 
-    
+    const updateEstimatedImageSize = (images: ChapterImage[]) => {
+        let totalHeight = 0
+        let num = -1
+        images.forEach(item => {
+            if (num == -1 || item.height < num) {
+                num = item.height
+            }
+            totalHeight += item.height
+        })  
+        setEstimatedImageSize(num)
+        setListTotalHeight(totalHeight)
+    }
+
     const changeImages = async () => {
         if (!imageMap.has(currentChapter!.chapter_id)) {
             await fetchChapterImages(currentChapter!.chapter_id)
                 .then(values => { 
+                    updateEstimatedImageSize(values)
                     addImages(currentChapter!.chapter_id, values) 
                     setImages([...values])
-                } 
-            )
-        } else {
-            console.log("cached")
-            setImages([...imageMap.get(currentChapter!.chapter_id)!])
+                })
+            return
         }
+        setImages([...imageMap.get(currentChapter!.chapter_id)!])
     }
 
     const updateReadingHistory = async () => {
@@ -151,18 +159,18 @@ const ChapterPage = () => {
 
     const updateRandomManhwas = async () => {
         if (randomManhwas.length == 0) {
-            await fetchRandomManhwa(0, 13, 3)
-                .then(values => setRandomManhwas([...values]))
+            await fetchRandomManhwa(0, 13, 3).then(values => setRandomManhwas([...values]))
         }
     }
     
     const update = async () => {        
         if (!currentChapter) { return }
         setLoading(true)
-        flashListRef.current?.scrollToOffset({animated: false, offset: 0})
-        await changeImages()
-        await updateReadingHistory()
-        await updateRandomManhwas()
+            scrollUp()
+            flashListRef.current?.scrollToOffset({animated: false, offset: 0})
+            await changeImages()
+            await updateReadingHistory()
+            await updateRandomManhwas()
         setLoading(false)
     }
 
@@ -171,6 +179,13 @@ const ChapterPage = () => {
             update()
         }, [currentChapter]),
         [currentChapter]
+    )
+
+    useEffect(
+        useCallback(() => {
+            updateEstimatedImageSize(images)
+        }, [images]),
+        [images]
     )
 
     const scrollUp = () => {
@@ -185,29 +200,32 @@ const ChapterPage = () => {
         router.back()
     } 
 
-    const right = async () => {
+    const nextChapter = async () => {
         moveToNextChapter()
         await update()
     }
 
-    const left = async () => {
+    const previousChapter = async () => {
         moveToPreviousChapter()
         await update()
     }
 
+    const getItemCount = (_data: unknown) => {console.log(_data); return 20};
+
     return (                    
             <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>                        
-                <View style={{width: '100%'}} >
+                <View style={{width: '100%', height: hp(120)}} >
                     <FlatList
+                        removeClippedSubviews={true}
+                        data={images}
                         ref={flashListRef as any}
-                        scrollEnabled={true}
                         ListHeaderComponent={
                             <ChapterPageHeader 
                                 manhwa_name={manhwa!.title} 
                                 chapter={currentChapter!}
                                 loading={loading} 
-                                leftChapter={left} 
-                                rightChapter={right} 
+                                leftChapter={previousChapter} 
+                                rightChapter={nextChapter} 
                                 onReturn={onReturn} />
                         }
                         ListFooterComponent={
@@ -215,12 +233,11 @@ const ChapterPage = () => {
                                 loading={loading}
                                 manhwas={randomManhwas} 
                                 chapter={currentChapter!} 
-                                leftChapter={left} 
-                                rightChapter={right}/>
+                                leftChapter={previousChapter} 
+                                rightChapter={nextChapter}/>
                         }
-                        nestedScrollEnabled={true}
                         initialNumToRender={1}
-                        data={images}
+                        maxToRenderPerBatch={1}
                         keyExtractor={(item: ChapterImage, index: number) => index.toString()}
                         renderItem={({item}) => <ManhwaImage image={item} />}/>
                 </View>

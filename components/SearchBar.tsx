@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState, useCallback, useRef } from 'react'
+import { StyleSheet, TextInput, View } from 'react-native'
+import React, { useCallback, useRef } from 'react'
 import { debounce } from 'lodash'
 import { Colors } from '@/constants/Colors'
 

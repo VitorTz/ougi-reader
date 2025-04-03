@@ -1,12 +1,11 @@
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import { AppStyle } from '@/style/AppStyles'
 import CloseBtn from './CloseBtn'
-import React, { useContext } from 'react'
+import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
 import { fetchRandomManhwa } from '@/lib/supabase'
 import { router } from 'expo-router'
-import { GlobalContext } from '@/helpers/context'
 import { AppConstants } from '@/constants/AppConstants'
 import { useReadingState } from '@/helpers/store'
 

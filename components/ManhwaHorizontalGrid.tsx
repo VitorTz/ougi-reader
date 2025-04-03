@@ -5,7 +5,6 @@ import { Manhwa } from '@/models/Manhwa'
 import { FlashList } from '@shopify/flash-list'
 import React from 'react'
 import ManhwaCover from './ManhwaCover'
-import { Colors } from '@/constants/Colors'
 
 
 const width: number = AppConstants.ManhwaCoverDimension.width

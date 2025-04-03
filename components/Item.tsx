@@ -1,4 +1,4 @@
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native'
 import React from 'react'
 import { AppStyle } from '@/style/AppStyles'
 import { Colors } from '@/constants/Colors'

@@ -3,7 +3,7 @@ import { AppConstants } from '@/constants/AppConstants'
 import { useReadingStatusState } from '@/helpers/store'
 import { SafeAreaView, StyleSheet } from 'react-native'
 import ReturnButton from '@/components/ReturnButton'
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { useFocusEffect } from 'expo-router'
 import { AppStyle } from '@/style/AppStyles'
@@ -32,14 +32,16 @@ const LibrayPage = () => {
     }
 
     const init = async () => {        
+        console.log("init")
         sortStates()
     }
 
-    useFocusEffect(
+    useEffect(
         useCallback(() => {
             init()
-        }, [])
-    )
+        }, [readingStatus]),
+        [readingStatus]
+    )    
 
     const onChangeValue = (status: any) => {
         statusRef.current = status
@@ -61,6 +63,7 @@ const LibrayPage = () => {
             manhwas={manhwas}
             numColumns={2}
             shouldShowChapterDate={false}
+            showChaptersPreview={false}
             hasResults={true}/>    
 
     </SafeAreaView>

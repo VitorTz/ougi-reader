@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         height: 50,
         borderRadius: 4,
-        backgroundColor: Colors.gray
+        backgroundColor: Colors.orange
     },
     formButtonText: {
         color: Colors.white,

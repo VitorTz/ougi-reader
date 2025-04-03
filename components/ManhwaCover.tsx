@@ -8,12 +8,10 @@ import {
 } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
 import { Image } from 'expo-image';
-import React, { useContext } from 'react'
+import React  from 'react'
 import { AppConstants } from '@/constants/AppConstants';
 import { AppStyle } from '@/style/AppStyles';
 import { router } from 'expo-router';
-import { GlobalContext } from '@/helpers/context';
-import { updateManhwaViews } from '@/lib/supabase';
 import { Colors } from '@/constants/Colors';
 import ChapterLink from './ChapterLink';
 import ManhwaStatusComponent from './ManhwaStatusComponent';
@@ -41,7 +39,7 @@ const ManhwaCover = ({
     marginBottom = 0,
     styleProp = false,
     showChaptersPreview = true,
-    shouldShowChapterDate = true
+    shouldShowChapterDate = true    
 }: ManhwaCoverProps) => {
 
     const { setManhwa } = useReadingState()
@@ -78,7 +76,7 @@ const ManhwaCover = ({
                 paddingHorizontal={10}
                 paddingVertical={8}
                 fontSize={12}
-                backgroundColor={manhwa.status == "Completed" ? Colors.orange : Colors.neonRed}
+                backgroundColor={manhwa.status == "Completed" ? Colors.orange : Colors.backgroundColor}
                 borderRadius={22}
             />
         </Pressable>

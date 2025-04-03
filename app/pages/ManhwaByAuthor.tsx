@@ -8,12 +8,13 @@ import ReturnButton from '@/components/ReturnButton'
 import { Manhwa } from '@/models/Manhwa'
 import { fetchManhwaByAuthor, fetchManhwaByGenre } from '@/lib/supabase'
 import ManhwaGrid from '@/components/ManhwaGrid'
-import { GlobalContext } from '@/helpers/context'
 import { AppStyle } from '@/style/AppStyles'
+import { useManhwaByAutorState } from '@/helpers/store'
 
 const ManhwaByAuthor = () => {
+    
+    const {authorMap, addAuthor} = useManhwaByAutorState()
 
-    const context = useContext(GlobalContext)
     const params = useLocalSearchParams()
     const author_id: number = params.author_id as any
     const author_name: string = params.author_name as any
@@ -22,8 +23,15 @@ const ManhwaByAuthor = () => {
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
     const init = async () => {
-        await fetchManhwaByAuthor(author_id, context.manhwa_by_author)
-            .then(values => setManhwas([...values]))
+        if (!authorMap.has(author_id)) {
+            await fetchManhwaByAuthor(author_id)
+                .then(values => {
+                    addAuthor(author_id, values)
+                    setManhwas([...values])
+                })
+        } else {
+            setManhwas([...authorMap.get(author_id)!])
+        }
     }
 
     useEffect(

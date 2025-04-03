@@ -102,14 +102,14 @@ export async function fetchUserManhwaReadingStatus(): Promise<Map<number, {manhw
     if (!session) { return m }
     const {data, error} = await supabase
         .from("reading_status")
-        .select("status, manhwas (manhwa_id, title, views, descr, cover_image_url, status, created_at, updated_at, color)")
+        .select("status, manhwas (manhwa_id, title, descr, cover_image_url, status, created_at, updated_at, color)")
         .eq("user_id", session.user.id)
     
     if (error) {
         console.log(error)
         return m
     }
-    data.forEach(item => m.set((item.manhwas as any).manhwa_id, {manhwa: item.manhwas as any, status: item.status}))        
+    data.forEach(item => m.set((item.manhwas as any).manhwa_id, {manhwa: item.manhwas as any, status: item.status}))
     return m
 }
 
@@ -158,7 +158,9 @@ export async function fetchManhwaRating(p_manhwa_id: number): Promise<{rating: n
         .single()
     
     if (error) {
-        console.log(error)
+        if (error.code != "PGRST116") {
+            console.log("error fecthing materialized rating", p_manhwa_id, error)
+        }
         return  {rating: 0.0, totalRatings: 0.0 }
     }
 
@@ -278,20 +280,6 @@ export async function upsertManhwaReadingStatus(p_manhwa_id: number, p_status: s
     }
 }
 
-export async function fetchBookmarkStatus(p_manhwa_id: number): Promise<boolean | null> {    
-
-    const session = await getSession()
-    if (!session) { return null }
-
-    const { data, error } = await supabase
-        .rpc('toggle_user_bookmark', { p_user_id: session.user.id, p_manhwa_id });
-    
-    if (error) {
-        console.log(error)
-        return false
-    }    
-    return data
-}
 
 export async function fetchLastUpdatedManhwas(
     p_offset: number = 0, 
@@ -323,14 +311,7 @@ export async function fetchMostViewedManhwas(
     return data
 }
 
-export async function fetchManhwaGenres(manhwa_id: number, genreMap: Map<number, string[]>): Promise<string[]> {
-    if (genreMap.has(manhwa_id)) {
-        const g = genreMap.get(manhwa_id)
-        if (g && g.length > 0) {
-            return g!
-        }
-    }
-
+export async function fetchManhwaGenres(manhwa_id: number): Promise<string[]> {
     const { data, error } = await supabase
         .from("manhwa_genres")
         .select("genre")
@@ -342,9 +323,7 @@ export async function fetchManhwaGenres(manhwa_id: number, genreMap: Map<number,
         return []
     }
 
-    const newGenres = data.map(item => item.genre)
-    genreMap.set(manhwa_id, newGenres)
-    return newGenres
+    return data.map(item => item.genre)
 }
 
 
@@ -402,15 +381,10 @@ export async function fetchManhwaByName(
 
 export async function fetchManhwaByAuthor(
     p_author_id: number,
-    authorMap: Map<number, Manhwa[]>,
     p_offset: number = 0,
     p_limit: number = 30,
     p_num_chapters: number = 3
 ): Promise<Manhwa[]> {
-    if (authorMap.has(p_author_id)) {        
-        return authorMap.get(p_author_id)!
-    }
-    
     const { data, error } = await supabase
         .rpc('get_manhwas_by_author', { p_offset, p_limit, p_num_chapters, p_author_id });
 
@@ -418,18 +392,13 @@ export async function fetchManhwaByAuthor(
         console.log(error)
         return []
     }
-    
-    authorMap.set(p_author_id, data)
+        
     return data
 }
 
 
 
-export async function fetchManhwaAuthors(manhwa_id: number, authorMap: Map<number, ManhwaAuthor[]>): Promise<ManhwaAuthor[]> {
-    if (authorMap.has(manhwa_id)) {
-        return authorMap.get(manhwa_id)!
-    }
-
+export async function fetchManhwaAuthors(manhwa_id: number): Promise<ManhwaAuthor[]> {
     const { data, error } = await supabase
         .from("manhwa_authors")
         .select("authors (author_id, name, role)")
@@ -440,9 +409,7 @@ export async function fetchManhwaAuthors(manhwa_id: number, authorMap: Map<numbe
         return []
     }
 
-    const r = data.map(item => item.authors) as any
-    authorMap.set(manhwa_id, r)
-    return r
+    return data.map(item => item.authors) as any
 }
 
 
@@ -478,11 +445,10 @@ export async function fetchChapterImages(chapter_id: number): Promise<ChapterIma
 }
 
 
-export async function updateManhwaViews(manhwa_id: number) {    
+export async function updateManhwaViews(p_manhwa_id: number) {    
+    console.log("increment", p_manhwa_id)
     const { error } = await supabase
-        .rpc('increment_manhwa_views', {
-            p_manhwa_id: manhwa_id  
-        });
+        .rpc('increment_manhwa_views', { p_manhwa_id  });
 
     if (error) {
         console.error('Error incrementing views:', error);

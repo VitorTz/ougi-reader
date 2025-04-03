@@ -7,16 +7,20 @@ import {
     View,
     KeyboardAvoidingView
 } from 'react-native'
+import { 
+    useMangaAuthorsState, 
+    useManhwaGenreState, 
+    useReadingState 
+} from '@/helpers/store';
+import React, { useCallback, useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useContext, useEffect, useState } from 'react'
 import ReturnButton from '@/components/ReturnButton'
-import { GlobalContext } from '@/helpers/context'
 import { Manhwa } from '@/models/Manhwa'
 import { Image } from 'expo-image'
 import { AppStyle } from '@/style/AppStyles'
 import ChapterList from '@/components/ChapterList'
 import { Colors } from '@/constants/Colors'
-import { fetchManhwaAuthors, fetchManhwaGenres } from '@/lib/supabase'
+import { fetchManhwaAuthors, fetchManhwaGenres, updateManhwaViews } from '@/lib/supabase'
 import GenreComponent from '@/components/GenreComponent'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AuthorComponent from '@/components/AuthorComponent'
@@ -25,22 +29,39 @@ import Item from '@/components/Item';
 import HomeButton from '@/components/HomeButton';
 import ManhwaRating from '@/components/ManhwaRating';
 import AddToLibrary from '@/components/AddToLibrary';
-import { useReadingState } from '@/helpers/store';
 import ManhwaComments from '@/components/ManhwaComments';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
 
-    const context = useContext(GlobalContext)
+    const { authorsMap, addAuthor } = useMangaAuthorsState()
+    const { genresMap, addGenre } = useManhwaGenreState()
+
     const [genres, setGenres] = useState<string[]>([])
     const [authors, setAuthors] = useState<ManhwaAuthor[]>([])
 
     const init = async () => {
-        await fetchManhwaAuthors(manhwa.manhwa_id, context.manhwa_authors)
-            .then(values => setAuthors([...values]))
+        if (!authorsMap.has(manhwa.manhwa_id)) {
+            await fetchManhwaAuthors(manhwa.manhwa_id)
+                .then(values => {
+                    addAuthor(manhwa.manhwa_id, values)
+                    setAuthors([...values])
+                })
+        } else {
+            setAuthors([...authorsMap.get(manhwa.manhwa_id)!])
+        }        
 
-        await fetchManhwaGenres(manhwa.manhwa_id, context.manhwa_genres)
-            .then(values => setGenres([...values]))        
+        if (!genresMap.has(manhwa.manhwa_id)) {
+            await fetchManhwaGenres(manhwa.manhwa_id)
+                .then(values => {
+                    addGenre(manhwa.manhwa_id, values)
+                    setGenres([...values])
+                })
+        } else {
+            setGenres([...genresMap.get(manhwa.manhwa_id)!])
+        }
+
+        updateManhwaViews(manhwa.manhwa_id)
     }
 
     useEffect(

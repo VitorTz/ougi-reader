@@ -70,6 +70,13 @@ const ManhwaRating = ({manhwa}: ManhwaRankingProps) => {
         const mRating = await fetchManhwaRating(manhwa_id)
         const userRating = await fetchUserManhwaRating(manhwa_id)
         const rtn: RatingRegister = {...mRating, userRating}
+        if (userRating != null && userRating > 0 && rtn.rating == 0) {
+            rtn.rating = userRating
+            rtn.totalRatings = 1
+        } else if (userRating != null && rtn.totalRatings == 1) {
+            rtn.rating = userRating
+        }
+
         setRating(rtn)
         addRating(manhwa_id, rtn)
     }    
@@ -88,10 +95,21 @@ const ManhwaRating = ({manhwa}: ManhwaRankingProps) => {
                 <ActivityIndicator size={26} color={Colors.white} /> :
                 <View style={{gap: 10}} >
                     <View style={{flexDirection: 'row', gap: 20, alignItems: "center", justifyContent: "center"}} >
-                        <Rating touchColor={manhwa.color} size={26} rating={rating.rating} onChange={handleChange} />
-                        <Text style={AppStyle.textRegular} >{rating.rating}/{rating.totalRatings} ratings</Text>
+                        <Rating 
+                            touchColor={manhwa.color} 
+                            size={26} 
+                            rating={rating.rating} 
+                            onChange={handleChange}/>
+                        <Text style={AppStyle.textRegular} >
+                            {rating.rating}/{rating.totalRatings} ratings
+                        </Text>
                     </View>
-                    {rating.userRating && <Text style={AppStyle.textRegular}>Your rating: {rating.userRating}</Text>}
+                    {
+                        rating.userRating && 
+                            <Text 
+                                style={AppStyle.textRegular}>Your rating: {rating.userRating}
+                            </Text>
+                    }
                 </View>
             }
         </View> 

@@ -1,9 +1,9 @@
-import { StyleSheet, Pressable, Text, View } from 'react-native'
-import { Colors } from '@/constants/Colors'
+import { StyleSheet, Pressable, Text } from 'react-native'
+import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import { AppStyle } from '@/style/AppStyles'
+import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import React from 'react'
-import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 
 
 interface AuthorComponentProps {

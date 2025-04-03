@@ -1,7 +1,6 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { AppStyle } from '@/style/AppStyles'
-import { GlobalContext } from '@/helpers/context'
 import { Colors } from '@/constants/Colors'
 import { router, useFocusEffect } from 'expo-router'
 import TopBar from '@/components/TopBar'

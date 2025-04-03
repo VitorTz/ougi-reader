@@ -1,33 +1,13 @@
 import { View, StatusBar } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
 import { Colors } from '@/constants/Colors'
-import { GlobalContext } from '@/helpers/context'
 import Toast from '@/components/Toast'
+import { Stack } from 'expo-router'
+import React from 'react'
 
 
 const _layout = () => {
   return (    
-    <GlobalContext.Provider value={{
-        manhwa: null,
-        chapters: null,
-        chapter_index: null,
-        chapter_images: new Map(),
-        chapter_readed: new Set(),
-        manhwa_genres: new Map(),
-        manhwa_authors: new Map(),
-        manhwa_by_author: new Map(),
-        manhwa_alt_titles: new Map(),
-        manhwa_queries: new Map(),
-        genres: new Set(),
-        session: null,
-        most_view_manhwas: {mawnhas: [], last_update: null},
-        last_update_manhwas: {mawnhas: [], last_update: null},
-        random_manhwas: {mawnhas: [], last_update: null},
-        user: null,
-        manhwa_rating: new Map(),
-        manhwa_reading_status: new Map()
-    }} >
+
       <View style={{flex: 1, backgroundColor: Colors.backgroundColor}} >
         <StatusBar hidden={true} backgroundColor={Colors.backgroundColor} />
         <Stack>
@@ -49,7 +29,6 @@ const _layout = () => {
         </Stack>
         <Toast.Component/>
       </View>
-    </GlobalContext.Provider>
   )
 }
 

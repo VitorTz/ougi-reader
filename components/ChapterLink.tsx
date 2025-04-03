@@ -1,15 +1,20 @@
-import { StyleSheet, Pressable, Text, ActivityIndicator, ViewStyle } from 'react-native'
-import { Manhwa } from '@/models/Manhwa'
-import { Chapter } from '@/models/Chapter'
-import { router } from 'expo-router'
+import { 
+    StyleSheet, 
+    Pressable, 
+    Text, 
+    ActivityIndicator, 
+    ViewStyle 
+} from 'react-native'
 import { fetchManhwaChapterList } from '@/lib/supabase'
-import React, {useState, useContext} from 'react'
-import { GlobalContext } from '@/helpers/context'
-import { Colors } from '@/constants/Colors'
-import { AppStyle } from '@/style/AppStyles'
-import { formatTimestamp } from '@/helpers/util'
-import { StyleProp } from 'react-native'
 import { useReadingState } from '@/helpers/store'
+import { formatTimestamp } from '@/helpers/util'
+import { AppStyle } from '@/style/AppStyles'
+import { Colors } from '@/constants/Colors'
+import { Chapter } from '@/models/Chapter'
+import { Manhwa } from '@/models/Manhwa'
+import { StyleProp } from 'react-native'
+import React, { useState } from 'react'
+import { router } from 'expo-router'
 
 
 interface ChapterLinkProps {

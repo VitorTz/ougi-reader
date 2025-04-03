@@ -1,12 +1,9 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback } from 'react'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { fetchMostViewedManhwas } from '@/lib/supabase'
 import { router, useFocusEffect } from 'expo-router'
-import { GlobalContext } from '@/helpers/context'
 import { StyleSheet } from 'react-native'
-import { Manhwa } from '@/models/Manhwa'
 import { useMostViewManhwasState } from '@/helpers/store'
-
 
 
 const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
@@ -19,7 +16,8 @@ const MostViewedManhwasComponent = () => {
     const init = async () => {
         const currentTime: number = new Date().getTime()
         if (manhwas.length == 0 || currentTime - lastUpdate > UPDATE_TIME_INTERVAL ) {
-            await fetchMostViewedManhwas().then(values => { setManhwas(values) })            
+            await fetchMostViewedManhwas()
+                .then(values => { setManhwas(values) })
         }        
     }    
 

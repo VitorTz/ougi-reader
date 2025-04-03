@@ -1,15 +1,13 @@
-import React, { useEffect, useCallback, useState, useRef } from 'react'
 import { StyleSheet, View, SafeAreaView, Pressable, Animated, Easing } from 'react-native'
-import { fetchRandomManhwa } from '@/lib/supabase'
+import React, { useEffect, useCallback, useState, useRef } from 'react'
 import ReturnButton from '@/components/ReturnButton'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { fetchRandomManhwa } from '@/lib/supabase'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import { AppStyle } from '@/style/AppStyles'
 import { Manhwa } from '@/models/Manhwa'
 import TopBar from '@/components/TopBar'
-import { wp } from '@/helpers/util'
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { Colors } from '@/constants/Colors'
-import { FlashList } from '@shopify/flash-list'
 
 const RandomManhwaPage = () => {
   const [manhwas, setManhwas] = useState<Manhwa[]>([])

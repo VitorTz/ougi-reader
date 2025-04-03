@@ -1,5 +1,5 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native'
+import React, { useEffect } from 'react'
 import { useReadingHistoryState, useReadingStatusState, useAuthState } from '@/helpers/store';
 import {
   useFonts,
@@ -14,10 +14,8 @@ import {
   LeagueSpartan_900Black,
 } from '@expo-google-fonts/league-spartan';
 import { AppStyle } from '@/style/AppStyles';
-import { hp, wp } from '@/helpers/util';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { GlobalContext } from '@/helpers/context';
 import { fetchUser, fetchUserManhwaReadingStatus, getSession, fetchUserReadingHistory } from '@/lib/supabase';
 
 

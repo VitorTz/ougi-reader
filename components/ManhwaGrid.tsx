@@ -18,6 +18,7 @@ interface ManhwaGridProps {
     gap?: number
     numColumns?: number
     shouldShowChapterDate?: boolean
+    showChaptersPreview?: boolean
 }
 
 const ManhwaGrid = ({
@@ -29,7 +30,8 @@ const ManhwaGrid = ({
     paddingHorizontal = wp(5), 
     gap = 10, 
     numColumns = 1,
-    shouldShowChapterDate = true
+    shouldShowChapterDate = true,
+    showChaptersPreview = true
 }: ManhwaGridProps) => {    
 
     const ref = useRef<FlashList<Manhwa>>()
@@ -57,7 +59,15 @@ const ManhwaGrid = ({
                 data={manhwas}
                 numColumns={numColumns}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item, index}) => <ManhwaCover shouldShowChapterDate={shouldShowChapterDate} width={width} height={height} marginBottom={6} manhwa={item} />}
+                renderItem={({item, index}) => 
+                    <ManhwaCover 
+                        showChaptersPreview={showChaptersPreview} 
+                        shouldShowChapterDate={shouldShowChapterDate} 
+                        width={width} 
+                        height={height} 
+                        marginBottom={6} 
+                        manhwa={item} />
+                }
                 estimatedItemSize={AppConstants.ManhwaCoverDimension.height + 180}
                 ListFooterComponent={
                     <>

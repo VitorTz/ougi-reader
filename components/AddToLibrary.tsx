@@ -28,7 +28,7 @@ const AddToLibrary = ({manhwa}: {manhwa: Manhwa}) => {
     )
 
     const onChangeValue = async (status: any) => {
-        await upsertManhwaReadingStatus(manhwa.manhwa_id, status)
+        upsertManhwaReadingStatus(manhwa.manhwa_id, status)
         addReadingStatus(manhwa, status)
     }
 
