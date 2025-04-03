@@ -1,12 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Chapter } from '@/models/Chapter'
-import { fetchManhwaChapterList } from '@/lib/supabase'
-import { useEffect, useCallback, useState } from 'react'
-import React from 'react'
-import { AppStyle } from '@/style/AppStyles'
-import { router, useFocusEffect } from 'expo-router'
-import { Colors } from '@/constants/Colors'
 import { useReadingHistoryState, useReadingState } from '@/helpers/store'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { useEffect, useCallback, useState } from 'react'
+import { fetchManhwaChapterList } from '@/lib/supabase'
+import { router, useFocusEffect } from 'expo-router'
+import { AppStyle } from '@/style/AppStyles'
+import { Colors } from '@/constants/Colors'
+import { Chapter } from '@/models/Chapter'
+import React from 'react'
 
 
 interface ChapterListProps {

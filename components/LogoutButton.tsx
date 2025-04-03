@@ -5,7 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import { supabase } from '@/lib/supabase'
-import { useAuthState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store'
+import { useAuthState, useRatingState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store'
 
 
 
@@ -14,6 +14,7 @@ const LogoutButton = ( ) => {
     const { logout } = useAuthState()    
     const { setReadingHistory } = useReadingHistoryState()
     const { setReadingStatus } = useReadingStatusState()
+    const { setRatingMap } = useRatingState()
     const [loading, setLoading] = useState(false)
 
     const onPress = async () => {
@@ -22,8 +23,9 @@ const LogoutButton = ( ) => {
         logout()        
         setReadingHistory(new Set())
         setReadingStatus(new Map())
-        router.replace("/pages/Home")
+        setRatingMap(new Map())
         setLoading(false)
+        router.replace("/pages/Home")
     }
 
     return (

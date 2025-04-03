@@ -1,9 +1,11 @@
 import { 
     StyleSheet, 
+    Platform,
     ScrollView, 
     SafeAreaView, 
     Text, 
-    View
+    View,
+    KeyboardAvoidingView
 } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useContext, useEffect, useState } from 'react'
@@ -24,6 +26,7 @@ import HomeButton from '@/components/HomeButton';
 import ManhwaRating from '@/components/ManhwaRating';
 import AddToLibrary from '@/components/AddToLibrary';
 import { useReadingState } from '@/helpers/store';
+import ManhwaComments from '@/components/ManhwaComments';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -72,32 +75,40 @@ const ManhwaPage = () => {
 
     return (
         <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>
-            <ScrollView style={{flex: 1}} >                
-                <LinearGradient 
-                    colors={[manhwa!.color, Colors.backgroundColor]} 
-                    style={styles.linearBackground} />
+            <KeyboardAvoidingView 
+                style={{flex: 1}} 
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <ScrollView 
+                    style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps='always'>
+                    <LinearGradient 
+                        colors={[manhwa!.color, Colors.backgroundColor]} 
+                        style={styles.linearBackground} />
 
-                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
-                    <HomeButton/>
-                    <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                        <ReturnButton/>
+                    <View style={{width: '100%', marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
+                        <HomeButton/>
+                        <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
+                            <ReturnButton/>
+                        </View>
                     </View>
-                </View>
 
-                <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
-                    <Image source={manhwa!.cover_image_url} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} />
-                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa!.title}</Text>
-                    <ManhwaRating manhwa={manhwa!} />
-                    <View style={{gap: 10, alignSelf: "flex-start"}} >
-                        <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
-                        <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa!.descr}</Text>
+                    <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
+                        <Image source={manhwa!.cover_image_url} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} />
+                        <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa!.title}</Text>
+                        <ManhwaRating manhwa={manhwa!} />
+                        <View style={{gap: 10, alignSelf: "flex-start"}} >
+                            <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
+                            <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa!.descr}</Text>
+                        </View>
+                        <AddToLibrary manhwa={manhwa!} />
+                        <ManhwaInfo manhwa={manhwa!} />
+                        <ChapterList manhwa_id={manhwa!.manhwa_id} />
+
+                        <ManhwaComments manhwa_id={manhwa!.manhwa_id}/>
                     </View>
-                    <AddToLibrary manhwa={manhwa!} />
-                    <ManhwaInfo manhwa={manhwa!} />
-                    <ChapterList manhwa_id={manhwa!.manhwa_id} />
-                </View>
 
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }

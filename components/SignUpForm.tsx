@@ -93,6 +93,7 @@ const SignUpForm = () => {
             if (e) {
                 Toast.show({title: 'Error', message: e.message, type: 'error'})
             } else {
+                await supabase.auth.signOut()
                 router.replace("/(auth)/SignInPage")
             }
         } else {

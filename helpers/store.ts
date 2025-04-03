@@ -3,7 +3,8 @@ import { ChapterImage } from '@/models/Image'
 import { Manhwa } from '@/models/Manhwa'
 import { Session } from '@supabase/supabase-js'
 import { create }  from 'zustand'
-
+import { RatingRegister } from './types'
+import { Comment } from './types'
 
 export type ReadingState = {
     manhwa: Manhwa | null
@@ -249,5 +250,52 @@ export const useManhwaMostViewPagesState = create<ManhwaMostViewPagesState>(
             r.set(page, manhwas)
             return {...state, pages: r}
         })}
+    })
+)
+
+type RatingState = {
+    ratingMap: Map<number, RatingRegister>
+    addRating: (manhwa_id: number, rating: RatingRegister) => void
+    setRatingMap: (map: Map<number, RatingRegister>) => void
+}
+
+export const useRatingState = create<RatingState>(
+    (set) => ({
+        ratingMap: new Map(),
+        addRating: (manhwa_id: number, rating: RatingRegister) => {set((state) => {
+            const r = new Map(state.ratingMap)
+            r.set(manhwa_id, rating)
+            return {...state, ratingMap: r}
+        })},
+        setRatingMap: (map: Map<number, RatingRegister>) => {set((state) => {
+            return {...state, ratingMap: map}
+        })}
+    })
+)
+
+
+type ManhwaCommentsState = {
+    commentsMap: Map<number, Comment[]>
+    addComment: (manhwa_id: number, comment: Comment) => void    
+    addCommentList: (manhwa_id: number, commentList: Comment[]) => void
+}
+
+
+export const useManhwaCommentsState = create<ManhwaCommentsState>(
+    (set) => ({
+        commentsMap: new Map(),
+        addComment: (manhwa_id: number, comment: Comment) => {set((state) => {
+            const r = new Map(state.commentsMap)
+            r.has(manhwa_id) ?
+                r.set(manhwa_id, [...[comment], ...r.get(manhwa_id)!]) :
+                r.set(manhwa_id, [comment])
+            return {...state, commentsMap: r}
+        })},
+        addCommentList: (manhwa_id: number, commentList: Comment[]) => {set((state) => {
+            const r = new Map(state.commentsMap)
+            r.set(manhwa_id, commentList)
+            return {...state, commentsMap: r}
+        })}
+        
     })
 )

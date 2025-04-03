@@ -5,9 +5,7 @@ import { ChapterImage } from '@/models/Image'
 import { AppState } from 'react-native'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GlobalContextProps } from '@/helpers/context'
-import { AppConstants } from '@/constants/AppConstants'
-import { useAuthState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store'
+import { Comment } from '@/helpers/types'
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
@@ -152,15 +150,49 @@ export async function updateUserReadingHistory(
 export async function fetchManhwaRating(p_manhwa_id: number): Promise<{rating: number, totalRatings: number}> {    
     const session = await getSession()
     if (!session) { return  {rating: 0.0, totalRatings: 0.0 } }
+
     const { data, error } = await supabase
-        .rpc('get_manhwa_rating_stats', { p_manhwa_id });
+        .from("materialized_ratings")
+        .select("rating, total_ratings")
+        .eq("manhwa_id", p_manhwa_id)
+        .single()
     
     if (error) {
-        console.log("error fetch manhwa rating", p_manhwa_id, error)
-        return { rating: 0.0, totalRatings: 0.0 }
+        console.log(error)
+        return  {rating: 0.0, totalRatings: 0.0 }
     }
+
+    return {rating: data.rating, totalRatings: data.total_ratings }
     
-    return {rating: data[0].rating ? data[0].rating : 0.0, totalRatings: data[0].totalratings}
+}
+
+
+export async function fetchManhwaComments(p_manhwa_id: number): Promise<Comment[]> {
+    const { data, error } = await supabase
+        .rpc('get_comments_by_manhwa', { p_manhwa_id })
+    
+    if (error) {
+        console.log(error)
+        return []
+    }
+
+    return data
+}
+
+
+export async function insertComment(manhwa_id: number, user_id: string, comment: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from("comments")
+        .insert({comment, manhwa_id, user_id})
+        .select("comment_id")
+        .single()
+    
+    if (error) {
+        console.log(error)
+        return null
+    }
+
+    return data.comment_id
 }
 
 export async function fetchManhwaRatingExcludingUser(

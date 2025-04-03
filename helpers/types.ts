@@ -1,6 +1,16 @@
 
-export type RatingState = {
+
+export type RatingRegister = {
     rating: number
     totalRatings: number
     userRating: number | null
+}
+
+export type Comment = {
+    comment_id: number
+    user_id: string
+    username: string
+    image_url: string | null
+    comment: string,
+    created_at: string
 }
