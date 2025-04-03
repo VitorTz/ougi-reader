@@ -4,7 +4,7 @@ import { Manhwa } from '@/models/Manhwa'
 import { Session } from '@supabase/supabase-js'
 import { create }  from 'zustand'
 import { RatingRegister } from './types'
-import { Comment } from './types'
+import { ManhwaComment } from './types'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 
 export type ReadingState = {
@@ -276,23 +276,23 @@ export const useRatingState = create<RatingState>(
 
 
 type ManhwaCommentsState = {
-    commentsMap: Map<number, Comment[]>
-    addComment: (manhwa_id: number, comment: Comment) => void    
-    addCommentList: (manhwa_id: number, commentList: Comment[]) => void
+    commentsMap: Map<number, ManhwaComment[]>
+    addComment: (manhwa_id: number, comment: ManhwaComment) => void    
+    addCommentList: (manhwa_id: number, commentList: ManhwaComment[]) => void
 }
 
 
 export const useManhwaCommentsState = create<ManhwaCommentsState>(
     (set) => ({
         commentsMap: new Map(),
-        addComment: (manhwa_id: number, comment: Comment) => {set((state) => {
+        addComment: (manhwa_id: number, comment: ManhwaComment) => {set((state) => {
             const r = new Map(state.commentsMap)
             r.has(manhwa_id) ?
                 r.set(manhwa_id, [...[comment], ...r.get(manhwa_id)!]) :
                 r.set(manhwa_id, [comment])
             return {...state, commentsMap: r}
         })},
-        addCommentList: (manhwa_id: number, commentList: Comment[]) => {set((state) => {
+        addCommentList: (manhwa_id: number, commentList: ManhwaComment[]) => {set((state) => {
             const r = new Map(state.commentsMap)
             r.set(manhwa_id, commentList)
             return {...state, commentsMap: r}

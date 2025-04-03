@@ -5,7 +5,7 @@ import { ChapterImage } from '@/models/Image'
 import { AppState } from 'react-native'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Comment } from '@/helpers/types'
+import { ManhwaComment } from '@/helpers/types'
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
@@ -169,7 +169,7 @@ export async function fetchManhwaRating(p_manhwa_id: number): Promise<{rating: n
 }
 
 
-export async function fetchManhwaComments(p_manhwa_id: number): Promise<Comment[]> {
+export async function fetchManhwaComments(p_manhwa_id: number): Promise<ManhwaComment[]> {
     const { data, error } = await supabase
         .rpc('get_comments_by_manhwa', { p_manhwa_id })
     

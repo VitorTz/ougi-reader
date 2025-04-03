@@ -1,4 +1,5 @@
 import { Dimensions } from "react-native";
+import { ManhwaComment } from "./types";
 
 
 export function sleep(ms: number) {
@@ -47,4 +48,29 @@ export function formatTimestamp(timestamp: string): string {
     const date = new Date(timestamp);
     const options = { month: 'long', day: 'numeric', year: 'numeric' };    
     return date.toLocaleDateString('en-US', options as any);
+}
+
+export function organizeComments(comments: ManhwaComment[]): ManhwaComment[] {
+    const commentMap = new Map<number, ManhwaComment>();
+    const topLevelComments: ManhwaComment[] = [];
+
+    // Primeiro, mapeamos os comentários por comment_id
+    comments.forEach(comment => {
+        comment.thread = []; // Garante que a thread está vazia antes de organizar
+        commentMap.set(comment.comment_id, comment);
+    });
+
+    // Agora, organizamos os comentários dentro de suas respectivas threads
+    comments.forEach(comment => {
+        if (comment.parent_comment_id) {
+            const parent = commentMap.get(comment.parent_comment_id);
+            if (parent) {
+                parent.thread.push(comment);
+            }
+        } else {
+            topLevelComments.push(comment);
+        }
+    });
+
+    return topLevelComments;
 }
