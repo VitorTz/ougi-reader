@@ -11,9 +11,8 @@ import { hp, wp } from '@/helpers/util'
 import { Chapter } from '@/models/Chapter'
 import { FlashList } from '@shopify/flash-list'
 import ChapterLink from '@/components/ChapterLink'
-import { Colors } from '@/constants/Colors'
-import { GlobalContext } from '@/helpers/context'
 import { router } from 'expo-router'
+import { useReadingState } from '@/helpers/store'
 
 
 const width = 160
@@ -40,7 +39,8 @@ const ChapterLinkGroup = ({chapters, manhwa}: {chapters: Chapter[] | null, manhw
 
 const ReadingHistoryItem = ({manhwa}: {manhwa: Manhwa}) => {
     
-    const context = useContext(GlobalContext)
+    const { setManhwa } = useReadingState()
+    
     const chapterGroupList: Chapter[][] = []
     const numChapterInGroup = 4
     let group: Chapter[] = []
@@ -61,7 +61,7 @@ const ReadingHistoryItem = ({manhwa}: {manhwa: Manhwa}) => {
     }
 
     const onPress = () => {
-        context.manhwa = manhwa
+        setManhwa(manhwa)
         router.navigate("/pages/ManhwaPage")
     }
 

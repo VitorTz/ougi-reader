@@ -1,40 +1,54 @@
-import { StyleSheet, SafeAreaView, Text, View } from 'react-native'
-import ReturnButton from '@/components/ReturnButton'
-import { debounce } from 'lodash'
-import { Colors } from '@/constants/Colors'
-import TopBar from '@/components/TopBar'
-import { wp } from '@/helpers/util'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AppConstants } from '@/constants/AppConstants'
-import SearchBar from '@/components/SearchBar'
-import { Manhwa } from '@/models/Manhwa'
-import { fetchManhwaByName, fetchMostViewedManhwas } from '@/lib/supabase'
-import { GlobalContext } from '@/helpers/context'
-import { AppStyle } from '@/style/AppStyles'
+import { StyleSheet, SafeAreaView } from 'react-native'
+import ReturnButton from '@/components/ReturnButton'
+import { fetchManhwaByName } from '@/lib/supabase'
 import ManhwaGrid from '@/components/ManhwaGrid'
+import SearchBar from '@/components/SearchBar'
+import { AppStyle } from '@/style/AppStyles'
+import TopBar from '@/components/TopBar'
+import { Manhwa } from '@/models/Manhwa'
 
 
 const SearchManhwa = () => {
-
-    const context = useContext(GlobalContext)    
+    
     const [hasResults, setHasResults] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
 
+    const state = useRef<{page: number, searchTerm: string}>({page: 0, searchTerm: ''})    
+
     const init = async () => {
-        await fetchMostViewedManhwas()
+        state.current.page = 0
+        state.current.searchTerm = ''
+        await fetchManhwaByName('')
             .then(values => {
                 setHasResults(values.length > 0)
                 setManhwas([...values])
             })
     }
 
-    const handleSearch = async (searchTerm: string) => {
-        if (searchTerm == '') { await init(); return }
-        await fetchManhwaByName(searchTerm, context.manhwa_queries)
-            .then(values => {
+    const handleSearch = async (searchTerm: string | null, append: boolean = false) => {
+        setLoading(true)
+        state.current.searchTerm = searchTerm ? searchTerm.trim() : ''
+        state.current.page = append ? state.current.page + 1 : 0
+        await fetchManhwaByName(
+            state.current.searchTerm, 
+            state.current.page * AppConstants.MANHWAS_PER_PAGE,
+            AppConstants.MANHWAS_PER_PAGE,
+            3
+        ).then(values => {
                 setHasResults(values.length > 0)
-                setManhwas([...values])
+                append ?
+                    setManhwas(prev => [...prev, ...values]) :
+                    setManhwas([...values])
             })
+        setLoading(false)
+    }
+
+    const onEndReached = async () => {
+        console.log("end")
+        await handleSearch(state.current.searchTerm, true)
     }
 
     useEffect(
@@ -50,11 +64,17 @@ const SearchManhwa = () => {
             <TopBar title="Search">
                 <ReturnButton/>
             </TopBar>
+
             <SearchBar handleSearch={handleSearch}/>
+            
             <ManhwaGrid 
-                manhwas={manhwas} 
+                manhwas={manhwas}
                 shouldShowChapterDate={false} 
-                numColumns={2} />
+                loading={loading}
+                hasResults={hasResults}
+                numColumns={2}
+                onEndReached={onEndReached} />
+
         </SafeAreaView>
     )
 }

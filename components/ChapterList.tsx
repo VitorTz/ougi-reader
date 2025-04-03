@@ -1,15 +1,12 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Chapter } from '@/models/Chapter'
 import { fetchManhwaChapterList } from '@/lib/supabase'
-import { useState, useEffect, useCallback, useContext} from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import React from 'react'
 import { AppStyle } from '@/style/AppStyles'
-import { GlobalContext } from '@/helpers/context'
 import { router, useFocusEffect } from 'expo-router'
 import { Colors } from '@/constants/Colors'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { AppConstants } from '@/constants/AppConstants'
-import { formatTimestamp } from '@/helpers/util'
+import { useReadingHistoryState, useReadingState } from '@/helpers/store'
 
 
 interface ChapterListProps {
@@ -17,20 +14,21 @@ interface ChapterListProps {
 }
 
 
-const ChapterItem = ({chapter, index}: {chapter: Chapter, index: number}) => {    
+const ChapterListItem = ({chapter, index}: {chapter: Chapter, index: number}) => {
 
-    const context = useContext(GlobalContext)
-
-    const [isReaded, setIsReaded] = useState(context.chapter_readed.has(chapter.chapter_id))    
+    const { setChapterNum: setChapterNum } = useReadingState()
+    const { readingHistoryMap } = useReadingHistoryState()
+    const [isReaded, setIsReaded] = useState(false)
+    
 
     useFocusEffect(
-        useCallback(() => {            
-            setIsReaded(context.chapter_readed.has(chapter.chapter_id))
-        }, [])
+        useCallback(() => {
+            setIsReaded(readingHistoryMap.has(chapter.chapter_id))
+        }, [readingHistoryMap]) 
     )
     
     const onPress = () => {
-        context.chapter_index = index
+        setChapterNum(chapter.chapter_num)
         router.navigate("/pages/ChapterPage")
     }
     
@@ -42,36 +40,30 @@ const ChapterItem = ({chapter, index}: {chapter: Chapter, index: number}) => {
                 height: 48,
                 borderRadius: 4,
                 justifyContent: "center",                 
-                alignItems: "center",                         
+                alignItems: "center",
                 backgroundColor: isReaded ? Colors.white : Colors.accentColor,
                 borderColor: isReaded ? Colors.accentColor : 'white',
                 flexDirection: 'row'                                
             }}>
-            <Text style={[AppStyle.textRegular, {color: isReaded ? Colors.almostBlack : 'white'}]}>{chapter.chapter_num}</Text>            
+            <Text style={[AppStyle.textRegular, {color: isReaded ? Colors.backgroundColor : 'white'}]}>{index + 1}</Text>            
         </Pressable>
     )
 }
 
 
 const ChapterList = ({manhwa_id}: ChapterListProps) => {
-
-    const context = useContext(GlobalContext)
-    const [chapters, setChapter] = useState<Chapter[]>([])
-
-    const init = async () => {   
-        context.chapter_index = null     
-        fetchManhwaChapterList(manhwa_id)
-            .then(values => {
-                    context.chapters = values
-                    setChapter([...values])
-                }
-            )
+        
+    const { chapterMap, setChapterMap } = useReadingState()
+    
+    const init = async () => {
+        await fetchManhwaChapterList(manhwa_id)
+            .then(values => {setChapterMap(values)})
     }    
 
     useEffect(
-        useCallback(() => {
+        () => {
             init()
-        }, []),
+        },
         []
     )    
 
@@ -80,8 +72,12 @@ const ChapterList = ({manhwa_id}: ChapterListProps) => {
             <Text style={AppStyle.textHeader}>Chapters</Text>            
             <View style={{width: '100%', gap: 10, flexDirection: 'row', justifyContent: "center", flexWrap: 'wrap'}} >
                 {
-                    chapters.map(
-                        (item, index) => <ChapterItem key={item.chapter_id} index={index} chapter={item} />
+                    Array.from(chapterMap.values()).map(
+                        (item, index) => 
+                            <ChapterListItem 
+                                key={item.chapter_id} 
+                                chapter={item} 
+                                index={index}/>
                     )
                 }            
             </View>

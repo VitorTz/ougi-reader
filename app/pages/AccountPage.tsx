@@ -1,5 +1,5 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { AppStyle } from '@/style/AppStyles'
 import { GlobalContext } from '@/helpers/context'
 import { Colors } from '@/constants/Colors'
@@ -8,16 +8,17 @@ import TopBar from '@/components/TopBar'
 import HomeButton from '@/components/HomeButton'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import LogoutButton from '@/components/LogoutButton'
+import { useAuthState } from '@/helpers/store'
 
 
 
 const AccountPage = () => {
 
-  const context = useContext(GlobalContext)
+  const { username, session } = useAuthState()
   const [starting, setStarting] = useState(true)
 
   const init = async () => {
-    if (context.session == null) {
+    if (session == null) {
       router.navigate("/(auth)/SignInPage")
     } else {
       setStarting(false)
@@ -45,7 +46,7 @@ const AccountPage = () => {
           <View style={{width: '100%', marginTop: 20, alignItems: "center", justifyContent: "center"}} >
             <View style={{gap: 10, alignItems: "center"}} >
               <Ionicons size={128} name='person-circle-outline' color={Colors.white} />
-              <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{context.user!.username}</Text>
+              <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{username ? username : ''}</Text>
             </View>
           </View>
         </>

@@ -29,19 +29,9 @@ import { wp } from '@/helpers/util'
 
 const Home = () => {
   
-  const context = useContext(GlobalContext)
-  
   const [menuVisible, setMenuVisible] = useState(false)  
   const menuWidth = wp(60)
-  const menuAnim = useRef(new Animated.Value(-menuWidth)).current
-
-  useFocusEffect(
-    useCallback(() => {      
-      context.manhwa = null
-      context.chapters = null,
-      context.chapter_index = null
-    }, [])
-  )
+  const menuAnim = useRef(new Animated.Value(-menuWidth)).current  
 
   const searchPress = () => {
     router.navigate("/pages/ManhwaSearch")
@@ -76,7 +66,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-        <TopBar title='Manhwa Reader'>
+        <TopBar title='Ougi'>
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
             <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
               <Ionicons name='search-outline' size={28} color={'white'} />

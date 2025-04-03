@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors'
 import { AppStyle } from '@/style/AppStyles'
 import { formatTimestamp } from '@/helpers/util'
 import { StyleProp } from 'react-native'
+import { useReadingState } from '@/helpers/store'
 
 
 interface ChapterLinkProps {
@@ -27,15 +28,16 @@ const ChapterLink = ({
     style
 }: ChapterLinkProps) => {
 
+    const { setManhwa, setChapterMap, setChapterNum } = useReadingState()
     const [loading, setLoading] = useState(false)
-    const context = useContext(GlobalContext)
+    const manhwa_id = manhwa.manhwa_id
 
     const onPress = async () => {        
         setLoading(true)
-        context.manhwa = manhwa
-        context.chapter_index = chapter.chapter_num - 1
-        await fetchManhwaChapterList(manhwa.manhwa_id)
-            .then(values => context.chapters = values)
+        setManhwa(manhwa)
+        await fetchManhwaChapterList(manhwa_id)
+            .then(values => setChapterMap(values))
+        setChapterNum(chapter.chapter_num)
         setLoading(false)
         router.navigate("/pages/ChapterPage")
     }
@@ -49,7 +51,7 @@ const ChapterLink = ({
                     <Text style={AppStyle.textRegular}>{prefix}{chapter.chapter_num}</Text>
                     {
                         shouldShowChapterDate && 
-                        <Text style={AppStyle.textRegular}>{formatTimestamp(chapter.created_at)}</Text>
+                        <Text style={[AppStyle.textRegular, {paddingRight: 20}]}>{formatTimestamp(chapter.created_at)}</Text>
                     }
                 </>
             }
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "space-between",
-        alignSelf: "flex-start",
+        
         gap: 20
     }
 })

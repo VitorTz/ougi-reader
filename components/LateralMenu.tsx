@@ -7,6 +7,8 @@ import { Colors } from '@/constants/Colors'
 import { fetchRandomManhwa } from '@/lib/supabase'
 import { router } from 'expo-router'
 import { GlobalContext } from '@/helpers/context'
+import { AppConstants } from '@/constants/AppConstants'
+import { useReadingState } from '@/helpers/store'
 
 
 interface LateralMenuProps {
@@ -19,12 +21,11 @@ const iconColor = Colors.white
 
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
-    const context = useContext(GlobalContext)
+    const { setManhwa } = useReadingState()
 
     const randomRead = async () => {
         const manhwaList = await fetchRandomManhwa(0, 1, 0)
-        const manhwa = manhwaList[0]
-        context.manhwa = manhwa
+        setManhwa(manhwaList[0])
         closeMenu()
         router.navigate({pathname: "/pages/ManhwaPage"})
     }
@@ -32,11 +33,6 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
     const accountPage = () => {
         closeMenu()
         router.navigate("/pages/AccountPage")
-    }
-
-    const bookmarkPage = () => {
-        closeMenu()
-        router.navigate("/pages/BookmarkPage")
     }
 
     const readingHistoryPage = () => {
@@ -59,42 +55,40 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
         <Pressable 
             onPress={accountPage} 
-            style={styles.link} >
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Account</Text>
             <Ionicons name='person-outline' size={20} color={iconColor} />
         </Pressable>
 
         <Pressable 
             onPress={libraryPage} 
-            style={styles.link} >
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Library</Text>
             <Ionicons name='library-outline' size={20} color={iconColor} />
-        </Pressable>
-
-        <Pressable 
-            onPress={bookmarkPage} 
-            style={styles.link} >
-            <Text style={AppStyle.textRegular}>Bookmarks</Text>
-            <Ionicons name='bookmarks-outline' size={20} color={iconColor} />
-        </Pressable>
+        </Pressable>        
 
         <Pressable 
             onPress={randomRead} 
-            style={styles.link} >
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Random read</Text>
             <Ionicons name='book-outline' size={20} color={iconColor} />
         </Pressable>
 
         <Pressable 
             onPress={readingHistoryPage}
-            style={styles.link} >
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Read history</Text>
             <Ionicons name='reader-outline' size={20} color={iconColor} />
         </Pressable>
 
         <Pressable 
             onPress={() => Linking.openURL("https://github.com/VitorTz/ougi-reader")} 
-            style={styles.link} >
+            style={styles.link} 
+            hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Github</Text>
             <Ionicons name='logo-github' size={20} color={iconColor} />
         </Pressable>
@@ -107,7 +101,7 @@ export default LateralMenu
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        gap: 30,
+        gap: 40,
         paddingVertical: 40,
         paddingHorizontal: 20
     },

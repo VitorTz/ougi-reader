@@ -6,6 +6,8 @@ import { AppState } from 'react-native'
 import { ManhwaAuthor } from '@/models/ManhwaAuthor'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GlobalContextProps } from '@/helpers/context'
+import { AppConstants } from '@/constants/AppConstants'
+import { useAuthState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store'
 
 
 const supabaseUrl = 'https://wevyvylwsfcxgbuqawuu.supabase.co'
@@ -38,11 +40,11 @@ export async function getSession(): Promise<Session | null> {
     return session
 }
 
-export async function fetchUser(): Promise<{username: string, image_url: string | null} | null> {
+export async function fetchUser(): Promise<{username: string | null, image_url: string | null}> {
     const session = await getSession()
 
     if (!session) {
-        return null
+        return {username: null, image_url: null}
     }
     const {data, error } = await supabase
         .from("users")
@@ -50,7 +52,12 @@ export async function fetchUser(): Promise<{username: string, image_url: string 
         .eq("user_id", session.user.id)
         .single()
 
-    return data
+    if (error) {
+        console.log(error)
+        return {username: null, image_url: null}
+    }
+
+    return { username: data.username, image_url: data.image_url }
 }
 
 export async function fetchUserBookmarks(): Promise<Map<number, Manhwa>> {
@@ -91,11 +98,21 @@ export async function fetchUserReadingHistory(): Promise<Set<number>> {
     return m
 }
 
-export async function initUser(context: GlobalContextProps) {
-    context.session = await getSession()
-    context.user = await fetchUser()
-    context.chapter_readed = await fetchUserReadingHistory()
-    context.user_bookmarks = await fetchUserBookmarks()
+export async function fetchUserManhwaReadingStatus(): Promise<Map<number, {manhwa: Manhwa, status: string}>> {
+    const m = new Map<number, {manhwa: Manhwa, status: string}>()
+    const session = await getSession()
+    if (!session) { return m }
+    const {data, error} = await supabase
+        .from("reading_status")
+        .select("status, manhwas (manhwa_id, title, views, descr, cover_image_url, status, created_at, updated_at, color)")
+        .eq("user_id", session.user.id)
+    
+    if (error) {
+        console.log(error)
+        return m
+    }
+    data.forEach(item => m.set((item.manhwas as any).manhwa_id, {manhwa: item.manhwas as any, status: item.status}))        
+    return m
 }
 
 
@@ -120,6 +137,7 @@ export async function updateUserReadingHistory(
 ): Promise<boolean> {
     const session = await getSession()
     if (!session) { return false }
+
     const { error } = await supabase
         .rpc('upsert_reading_history', { p_user_id: session.user.id, p_chapter_id, p_manhwa_id });
     
@@ -196,6 +214,7 @@ export async function fetchUserManhwaRating(manhwa_id: number): Promise<number |
 
     return data.rating
 }
+
 
 export async function fetchManhwaReadingStatus(manhwa_id: number): Promise<string | null> {
     const session = await getSession()
@@ -331,17 +350,12 @@ export async function fetchRandomManhwa(
 }
 
 export async function fetchManhwaByName(
-    p_name_manhwa: string, 
-    queries: Map<string, Manhwa[]>,
+    p_name_manhwa: string,
     p_offset: number = 0,
     p_limit: number = 30,
     p_num_chapters: number = 3
-): Promise<Manhwa[]> {    
-    console.log(p_name_manhwa, p_offset, p_limit, p_num_chapters)
+): Promise<Manhwa[]> {
     p_name_manhwa = p_name_manhwa.trim()
-    if (queries.has(p_name_manhwa)) {        
-        return queries.get(p_name_manhwa)!
-    }
     
     const { data, error } = await supabase
         .rpc('get_manhwas_by_name', { p_offset, p_limit, p_num_chapters, p_name_manhwa });
@@ -351,7 +365,6 @@ export async function fetchManhwaByName(
         return []
     }
     
-    queries.set(p_name_manhwa, data)
     return data
 }
 
@@ -417,14 +430,7 @@ export async function fetchManhwaChapterList(manhwa_id: number): Promise<Chapter
     return data
 }
 
-export async function fetchChapterImages(chapter_id: number, imageMap: Map<number, ChapterImage[]>): Promise<ChapterImage[]> {
-    if (imageMap.has(chapter_id)) {
-        const images = imageMap.get(chapter_id)
-        if (images && images.length > 0 ) {
-            return images
-        }
-    }
-
+export async function fetchChapterImages(chapter_id: number): Promise<ChapterImage[]> {
     const { data, error } = await supabase
         .from("chapter_images")
         .select("image_url, width, height")
@@ -434,8 +440,8 @@ export async function fetchChapterImages(chapter_id: number, imageMap: Map<numbe
     if (error) {
         console.log(error)
         return []
-    }    
-    imageMap.set(chapter_id, data)
+    }
+
     return data
 }
 
@@ -453,9 +459,7 @@ export async function updateManhwaViews(manhwa_id: number) {
 }
 
 
-export async function fetchGenres(genres: Set<string>) {
-    if (genres.size > 0) { return }
-
+export async function fetchGenres(): Promise<string[]> {
     const { data, error } = await supabase
         .rpc('get_genres');
 
@@ -464,5 +468,5 @@ export async function fetchGenres(genres: Set<string>) {
         return [];
     }
 
-    data.map((item: any) => genres.add(item.genre));
+    return data.map((item: {genre: string}) => item.genre)
 }

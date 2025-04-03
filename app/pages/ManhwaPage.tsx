@@ -21,9 +21,9 @@ import AuthorComponent from '@/components/AuthorComponent'
 import { formatTimestamp, hp, wp } from '@/helpers/util';
 import Item from '@/components/Item';
 import HomeButton from '@/components/HomeButton';
-import Bookmark from '@/components/Bookmark';
 import ManhwaRating from '@/components/ManhwaRating';
 import AddToLibrary from '@/components/AddToLibrary';
+import { useReadingState } from '@/helpers/store';
 
 
 const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
@@ -68,33 +68,33 @@ const ManhwaInfo = ({manhwa}: {manhwa: Manhwa}) => {
 
 const ManhwaPage = () => {
     
-    const context = useContext(GlobalContext)    
-    const manhwa: Manhwa = context.manhwa!
+    const { manhwa } = useReadingState()
 
     return (
         <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>
             <ScrollView style={{flex: 1}} >                
                 <LinearGradient 
-                    colors={[manhwa.color, Colors.backgroundColor]} 
+                    colors={[manhwa!.color, Colors.backgroundColor]} 
                     style={styles.linearBackground} />
 
                 <View style={{marginVertical: 10, flexDirection: 'row', alignItems: "center", justifyContent: "space-between", padding: wp(5)}} >
                     <HomeButton/>
                     <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
-                        <Bookmark manhwa={manhwa}/>
                         <ReturnButton/>
                     </View>
                 </View>
 
                 <View style={{width: '100%', gap: 20, alignItems: "center", paddingHorizontal: wp(5), paddingBottom: hp(8)}}>
-                    <Image source={manhwa.cover_image_url} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} />
-                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa.title}</Text>
-                    <ManhwaRating manhwa={manhwa} />
-                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
-                    <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa.descr}</Text>
-                    <ManhwaInfo manhwa={manhwa} />
-                    <AddToLibrary manhwa={manhwa} />
-                    <ChapterList manhwa_id={manhwa.manhwa_id} />
+                    <Image source={manhwa!.cover_image_url} style={{width: '100%', maxWidth: 380, height: 480, borderRadius: 4}} />
+                    <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>{manhwa!.title}</Text>
+                    <ManhwaRating manhwa={manhwa!} />
+                    <View style={{gap: 10, alignSelf: "flex-start"}} >
+                        <Text style={[AppStyle.textHeader, {alignSelf: 'flex-start'}]}>Summary</Text>
+                        <Text style={[AppStyle.textRegular, {alignSelf: 'flex-start'}]}>{manhwa!.descr}</Text>
+                    </View>
+                    <AddToLibrary manhwa={manhwa!} />
+                    <ManhwaInfo manhwa={manhwa!} />
+                    <ChapterList manhwa_id={manhwa!.manhwa_id} />
                 </View>
 
             </ScrollView>

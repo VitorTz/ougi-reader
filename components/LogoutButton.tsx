@@ -1,25 +1,27 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { ActivityIndicator, Pressable, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
 import { AppConstants } from '@/constants/AppConstants'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/Colors'
-import { GlobalContext } from '@/helpers/context'
 import { supabase } from '@/lib/supabase'
+import { useAuthState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store'
 
 
 
 const LogoutButton = ( ) => {
 
-    const context = useContext(GlobalContext)
+    const { logout } = useAuthState()    
+    const { setReadingHistory } = useReadingHistoryState()
+    const { setReadingStatus } = useReadingStatusState()
     const [loading, setLoading] = useState(false)
 
     const onPress = async () => {
         setLoading(true)
         await supabase.auth.signOut()
-        context.user = null
-        context.session = null
-        context.user_bookmarks = new Set()        
+        logout()        
+        setReadingHistory(new Set())
+        setReadingStatus(new Map())
         router.replace("/pages/Home")
         setLoading(false)
     }

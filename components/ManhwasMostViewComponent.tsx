@@ -5,6 +5,7 @@ import { router, useFocusEffect } from 'expo-router'
 import { GlobalContext } from '@/helpers/context'
 import { StyleSheet } from 'react-native'
 import { Manhwa } from '@/models/Manhwa'
+import { useMostViewManhwasState } from '@/helpers/store'
 
 
 
@@ -13,25 +14,14 @@ const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
 
 const MostViewedManhwasComponent = () => {
 
-    const context = useContext(GlobalContext)
-    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const { manhwas, lastUpdate, setManhwas } = useMostViewManhwasState()
 
-    const init = async () => {        
-        const lastTime: number | null = context.most_view_manhwas.last_update
-        const currentTime: number = new Date().getTime()        
-        if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {            
-            context.most_view_manhwas.last_update = currentTime
-            await fetchMostViewedManhwas()
-                .then(values => {
-                context.most_view_manhwas.mawnhas = values
-                setManhwas([...values])}
-            )
-            return
-        } else {
-            setManhwas([...context.most_view_manhwas.mawnhas])
-        }
-        
-    }
+    const init = async () => {
+        const currentTime: number = new Date().getTime()
+        if (manhwas.length == 0 || currentTime - lastUpdate > UPDATE_TIME_INTERVAL ) {
+            await fetchMostViewedManhwas().then(values => { setManhwas(values) })            
+        }        
+    }    
 
     useFocusEffect(
         useCallback(() => {
@@ -46,7 +36,7 @@ const MostViewedManhwasComponent = () => {
     return (
         <ManhwaHorizontalGrid 
             title='Most View ⚡' 
-            manhwas={manhwas} 
+            manhwas={manhwas}
             onPress={onPress}/>
     )
 }

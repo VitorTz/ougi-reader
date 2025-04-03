@@ -1,34 +1,23 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { GlobalContext } from '@/helpers/context'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useEffect } from 'react'
 import { fetchGenres } from '@/lib/supabase'
 import { AppStyle } from '@/style/AppStyles'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import Item from './Item'
+import { useManhwaGenresState } from '@/helpers/store'
 
-
-const GenreItem = ({genre}: {genre: string}) => {
-
-    const onPress = () => {
-        router.navigate({pathname: "/pages/ManhwaByGenre", params: {genre}})
-    }
-
-    return (
-        <Pressable onPress={onPress} style={styles.item} >
-            <Text style={[AppStyle.textRegular, {fontSize: 14, color: 'white'}]}>{genre}</Text>
-        </Pressable>
-    )
-}
 
 const GenresGrid = () => {
 
-    const context = useContext(GlobalContext)
-    const [genres, setGenres] = useState<string[]>([])
+    const { genres, setGenres } = useManhwaGenresState()
 
     const init = async () => {
-        await fetchGenres(context.genres)
-        setGenres([...Array.from(context.genres)])
+        if (genres.length != 0) {
+            return
+        }
+        await fetchGenres()
+            .then(values => setGenres(values))
     }
 
     useEffect(
@@ -47,7 +36,7 @@ const GenresGrid = () => {
                 renderItem={({item}) => <Item 
                     text={item} 
                     onPress={() => router.navigate({pathname: "/pages/ManhwaByGenre", params: {genre: item}})} 
-                    backgroundColor={Colors.gray}
+                    backgroundColor={Colors.accentColor}
                     style={{marginRight: 6}}/>}
                 horizontal={true}
             />
@@ -58,13 +47,5 @@ const GenresGrid = () => {
 export default GenresGrid
 
 const styles = StyleSheet.create({
-    item: {
-        paddingHorizontal: 10, 
-        paddingVertical: 12, 
-        marginRight: 10, 
-        backgroundColor: Colors.gray,
-        alignItems: "center", 
-        justifyContent: "center", 
-        borderRadius: 4
-    }
+    
 })

@@ -1,71 +1,80 @@
-import { StyleSheet, Text, SafeAreaView, View } from 'react-native'
+import { StyleSheet, SafeAreaView } from 'react-native'
 import TopBar from '@/components/TopBar'
 import ReturnButton from '@/components/ReturnButton'
 import { debounce } from 'lodash'
-import { wp } from '@/helpers/util'
 import { AppStyle } from '@/style/AppStyles'
 import ManhwaGrid from '@/components/ManhwaGrid'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Manhwa } from '@/models/Manhwa'
 import { fetchMostViewedManhwas } from '@/lib/supabase'
 import { AppConstants } from '@/constants/AppConstants'
+import { useManhwaMostViewPagesState } from '@/helpers/store'
 
-
-var page = 0
 
 const MostViewPage = () => {
     
-    const [starting, setStarting] = useState(true)
-    const [loading, setLoading] = useState(false)
-    const [hasResults, setHasResults] = useState(true)
+    const { pages, addPage } = useManhwaMostViewPagesState()    
     const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const [loading, setLoading] = useState(false)    
+    const [hasResults, setHasResults] = useState(true)
+    const page = useRef(0)
 
-    const init = async () => {
-        page = 0
-        await fetchMostViewedManhwas(0, AppConstants.MANHWAS_PER_PAGE, 3)
-            .then(values => setManhwas([...values]))        
-        setStarting(false)
-    }
-
-    const updateManhwas = async () => {
+    const update = async () => {
+        const pageNum = page.current
         if (!hasResults) { return }
-        setLoading(true)
-        page += 1
-        console.log(page * AppConstants.MANHWAS_PER_PAGE)
-        await fetchMostViewedManhwas(page * AppConstants.MANHWAS_PER_PAGE, AppConstants.MANHWAS_PER_PAGE, 3)
-            .then(values => {
+        setLoading(true)    
+        if (pages.has(pageNum)) {
+            console.log("cached page", pageNum)
+            setManhwas(prev => [...prev, ...pages.get(pageNum)!])
+        } else {
+            console.log("new page", pageNum)
+            await fetchMostViewedManhwas(
+                pageNum * AppConstants.MANHWAS_PER_PAGE,
+                AppConstants.MANHWAS_PER_PAGE,
+                3
+            ).then(values => {
                 setHasResults(values.length > 0)
-                setManhwas(prev => [...prev, ...values])}
-            )
+                addPage(pageNum, values)
+                pageNum > 0 ?
+                    setManhwas(prev => [...prev, ...values]) :
+                    setManhwas([...values])
+            })
+        }
+        page.current += 1
         setLoading(false)
     }
 
+    
     const debounceUpdate = useCallback(
-        debounce(updateManhwas, 400),
+        debounce(update, 500),
         []
     )
 
-    useEffect(useCallback(() => {
-        init()
-    }, []), [])
+    const init = async () => {
+        await debounceUpdate()
+    }
+
+    useEffect(
+        useCallback(() => {
+            init()
+        }, []),
+        []
+    )
 
     return (
         <SafeAreaView style={AppStyle.safeArea}>
             <TopBar title="Most View ⚡">
                 <ReturnButton/>
             </TopBar>
-            {
-                !starting &&
-                <ManhwaGrid 
-                    manhwas={manhwas} 
-                    gap={10} 
-                    paddingHorizontal={wp(5)} 
-                    onEndReached={debounceUpdate} 
-                    loading={loading}
-                    hasResults={hasResults}
-                    />
-            }
-        </SafeAreaView>
+            <ManhwaGrid 
+                manhwas={manhwas} 
+                numColumns={2} 
+                shouldShowChapterDate={false}
+                loading={loading}
+                hasResults={hasResults}
+                onEndReached={debounceUpdate}
+                />
+        </SafeAreaView>        
     )
 }
 

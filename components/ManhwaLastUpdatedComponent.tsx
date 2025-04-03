@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback } from 'react'
 import ManhwaHorizontalGrid from './ManhwaHorizontalGrid'
 import { fetchLastUpdatedManhwas } from '@/lib/supabase'
-import { GlobalContext } from '@/helpers/context'
 import { useFocusEffect } from 'expo-router'
 import { StyleSheet } from 'react-native'
-import { Manhwa } from '@/models/Manhwa'
 import { router } from 'expo-router'
+import { useLatestReleasesManhwaState } from '@/helpers/store'
 
 
 const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
@@ -13,23 +12,13 @@ const UPDATE_TIME_INTERVAL =  5 * 60 * 1000
 
 const ManhwaLastReleasesComponent = () => {
 
-    const context = useContext(GlobalContext)
-    const [manhwas, setManhwas] = useState<Manhwa[]>([])
+    const { manhwas, setManhwas, lastUpdate } = useLatestReleasesManhwaState()
 
-    const init = async () => {            
-            const lastTime: number | null = context.last_update_manhwas.last_update
-            const currentTime: number = new Date().getTime()        
-            if (lastTime == null || currentTime - lastTime > UPDATE_TIME_INTERVAL ) {                
-                context.last_update_manhwas.last_update = currentTime
-                await fetchLastUpdatedManhwas()
-                    .then(values => {
-                    context.last_update_manhwas.mawnhas = values
-                    setManhwas([...values])}
-                )
-            } else {
-                setManhwas([...context.last_update_manhwas.mawnhas])
-            }
+    const init = async () => {                                    
+        if (manhwas.length == 0 || Date.now() - lastUpdate > UPDATE_TIME_INTERVAL ) {
+            await fetchLastUpdatedManhwas().then(values => {setManhwas(values)})
         }
+    }
     
     useFocusEffect(
         useCallback(() => {

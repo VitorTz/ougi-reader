@@ -29,6 +29,7 @@ import { Chapter } from '@/models/Chapter'
 import { hp, wp } from '@/helpers/util'
 import { router } from 'expo-router'
 import { Manhwa } from '@/models/Manhwa'
+import { useChapterImageState, useReadingState, useReadingHistoryState } from '@/helpers/store';
 
 
 interface ChaperHeaderProps {    
@@ -51,7 +52,7 @@ const ChapterPageHeader = ({manhwa_name, chapter, loading, leftChapter, rightCha
             <View style={{flexDirection: 'row', gap: 10, alignItems: "center", justifyContent: "flex-start"}} >
                 <Text style={AppStyle.textHeader}>Chapter</Text>
                 <View style={{flexDirection: 'row', alignItems: "center", gap: 10, alignSelf: 'flex-end'}} >
-                    <Pressable onPress={leftChapter}> 
+                    <Pressable hitSlop={AppConstants.hitSlop} onPress={leftChapter}> 
                         <Ionicons name='chevron-back-outline' size={22} color='white' />
                     </Pressable>
                     {
@@ -59,7 +60,7 @@ const ChapterPageHeader = ({manhwa_name, chapter, loading, leftChapter, rightCha
                         <ActivityIndicator size={18} color={Colors.white} /> :
                         <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
                     }
-                    <Pressable onPress={rightChapter}>
+                    <Pressable hitSlop={AppConstants.hitSlop} onPress={rightChapter}>
                         <Ionicons name='chevron-forward-outline' size={20} color='white' />
                     </Pressable>
                 </View>
@@ -82,11 +83,11 @@ const ChapterPageFooter = ({chapter, manhwas, loading, leftChapter, rightChapter
         <View style={styles.pageFooter} >
             <View style={{width: '100%', gap: 10, flexDirection: 'row', justifyContent: "center", alignItems: "center"}} >
                 <Text style={AppStyle.textHeader}>Chapter </Text>
-                <Pressable onPress={leftChapter}> 
+                <Pressable hitSlop={AppConstants.hitSlop} onPress={leftChapter}> 
                     <Ionicons name='chevron-back-outline' size={22} color='white' />
                 </Pressable>                
                 <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{chapter ? chapter.chapter_num : ''}</Text>
-                <Pressable onPress={rightChapter}>
+                <Pressable hitSlop={AppConstants.hitSlop} onPress={rightChapter}>
                     <Ionicons name='chevron-forward-outline' size={22} color='white' />
                 </Pressable>
             </View>         
@@ -103,57 +104,74 @@ const ChapterPageFooter = ({chapter, manhwas, loading, leftChapter, rightChapter
 }
 
 const ChapterPage = () => {
+
+    const { 
+        readingHistoryMap, 
+        addToReadingHistory 
+    } = useReadingHistoryState()
     
-    const context = useContext(GlobalContext)
-    const [randomManhwas, setRandomManhwas] = useState<Manhwa[]>([])
-    const [loading, setLoading] = useState(false)
+    const { 
+        manhwa,
+        currentChapter,
+        chapterMap,
+        moveToNextChapter, 
+        moveToPreviousChapter,
+    } = useReadingState()
+    
+    const { imageMap, addImages } = useChapterImageState()
+
     const [images, setImages] = useState<ChapterImage[]>([])
-    const [chapter, setChapter] = useState<Chapter | null>(null)    
-
-    const flashListRef = useRef<FlatList<ChapterImage>>()
     
-    const update = async () => {
-        setLoading(true)
-        
-        flashListRef.current?.scrollToOffset({animated: false, offset: 0})        
-        const newChapter = context.chapters![context.chapter_index!]
-        context.chapter_readed.add(newChapter.chapter_id)
-        setChapter(newChapter)
-        
-        await fetchChapterImages(newChapter.chapter_id, context.chapter_images)
-            .then(values => setImages([...values]))
+    const [randomManhwas, setRandomManhwas] = useState<Manhwa[]>([])
+    const [loading, setLoading] = useState(false)    
 
-        await updateUserReadingHistory(newChapter.chapter_id, context.manhwa!.manhwa_id)
-            .then(value => value ? context.chapter_readed.add(newChapter.chapter_id) : null)
+    const flashListRef = useRef<FlatList<ChapterImage>>()    
 
+    
+    const changeImages = async () => {
+        if (!imageMap.has(currentChapter!.chapter_id)) {
+            await fetchChapterImages(currentChapter!.chapter_id)
+                .then(values => { 
+                    addImages(currentChapter!.chapter_id, values) 
+                    setImages([...values])
+                } 
+            )
+        } else {
+            console.log("cached")
+            setImages([...imageMap.get(currentChapter!.chapter_id)!])
+        }
+    }
+
+    const updateReadingHistory = async () => {
+        if (!readingHistoryMap.has(currentChapter!.chapter_id)) {
+            await updateUserReadingHistory(currentChapter!.chapter_id, manhwa!.manhwa_id)
+                .then(value => value ? addToReadingHistory(currentChapter!.chapter_id) :  null)
+        }
+    }
+
+    const updateRandomManhwas = async () => {
         if (randomManhwas.length == 0) {
             await fetchRandomManhwa(0, 13, 3)
                 .then(values => setRandomManhwas([...values]))
         }
-
+    }
+    
+    const update = async () => {        
+        if (!currentChapter) { return }
+        setLoading(true)
+        flashListRef.current?.scrollToOffset({animated: false, offset: 0})
+        await changeImages()
+        await updateReadingHistory()
+        await updateRandomManhwas()
         setLoading(false)
     }
 
     useEffect(
         useCallback(() => {
             update()
-        }, []),
-        []
+        }, [currentChapter]),
+        [currentChapter]
     )
-
-    const leftChapter = async () => {
-        if (context.chapter_index! > 0) {
-            context.chapter_index! -= 1            
-            await update()
-        }
-    }
-
-    const rightChapter = async () => {
-        if (context.chapter_index! + 1 < context.chapters!.length) {
-            context.chapter_index! += 1
-            await update()
-        }
-    }
 
     const scrollUp = () => {
         flashListRef.current?.scrollToOffset({animated: false, offset: 0})
@@ -163,10 +181,19 @@ const ChapterPage = () => {
         flashListRef.current?.scrollToEnd({animated: false})
     }
 
-    const onReturn = () => {        
-        context.chapter_index = null
+    const onReturn = () => {
         router.back()
-    }    
+    } 
+
+    const right = async () => {
+        moveToNextChapter()
+        await update()
+    }
+
+    const left = async () => {
+        moveToPreviousChapter()
+        await update()
+    }
 
     return (                    
             <SafeAreaView style={[AppStyle.safeArea, {padding: 0}]}>                        
@@ -176,20 +203,20 @@ const ChapterPage = () => {
                         scrollEnabled={true}
                         ListHeaderComponent={
                             <ChapterPageHeader 
-                                manhwa_name={context.manhwa!.title} 
-                                chapter={chapter!} 
+                                manhwa_name={manhwa!.title} 
+                                chapter={currentChapter!}
                                 loading={loading} 
-                                leftChapter={leftChapter} 
-                                rightChapter={rightChapter} 
+                                leftChapter={left} 
+                                rightChapter={right} 
                                 onReturn={onReturn} />
                         }
                         ListFooterComponent={
                             <ChapterPageFooter
                                 loading={loading}
                                 manhwas={randomManhwas} 
-                                chapter={chapter!} 
-                                leftChapter={leftChapter} 
-                                rightChapter={rightChapter}/>
+                                chapter={currentChapter!} 
+                                leftChapter={left} 
+                                rightChapter={right}/>
                         }
                         nestedScrollEnabled={true}
                         initialNumToRender={1}

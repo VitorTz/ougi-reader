@@ -15,9 +15,9 @@ import { router } from 'expo-router';
 import { GlobalContext } from '@/helpers/context';
 import { updateManhwaViews } from '@/lib/supabase';
 import { Colors } from '@/constants/Colors';
-import Bookmark from './Bookmark';
 import ChapterLink from './ChapterLink';
 import ManhwaStatusComponent from './ManhwaStatusComponent';
+import { useReadingState } from '@/helpers/store';
 
 
 
@@ -44,11 +44,10 @@ const ManhwaCover = ({
     shouldShowChapterDate = true
 }: ManhwaCoverProps) => {
 
-    const context = useContext(GlobalContext)    
+    const { setManhwa } = useReadingState()
 
     const onPress = () => {
-        updateManhwaViews(manhwa.manhwa_id)
-        context.manhwa = manhwa
+        setManhwa(manhwa)
         router.navigate("/pages/ManhwaPage")
     }    
 
@@ -61,7 +60,10 @@ const ManhwaCover = ({
             />
             <View style={styles.container} >
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
-                {showChaptersPreview && manhwa.chapters && manhwa.chapters.map(
+                {
+                showChaptersPreview && 
+                manhwa.chapters && 
+                manhwa.chapters.map(
                     (item) => 
                         <ChapterLink 
                             shouldShowChapterDate={shouldShowChapterDate} 
@@ -76,12 +78,9 @@ const ManhwaCover = ({
                 paddingHorizontal={10}
                 paddingVertical={8}
                 fontSize={12}
-                backgroundColor={manhwa.status == "Completed" ? Colors.backgroundColor : "#C87E6A"}
+                backgroundColor={manhwa.status == "Completed" ? Colors.orange : Colors.neonRed}
                 borderRadius={22}
             />
-            <View style={{position: 'absolute', right: 10, top: 10}}>
-                <Bookmark manhwa={manhwa} />
-            </View>
         </Pressable>
     )
 }
@@ -91,9 +90,7 @@ export default ManhwaCover
 const styles = StyleSheet.create({    
     container: {
         paddingVertical: 10,  
-        width: '100%',        
-        
-        borderTopWidth: 2,
+        width: '100%',
         borderBottomLeftRadius: 4,
         borderBottomRightRadius: 4        
     },

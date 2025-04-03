@@ -9,17 +9,22 @@ import {
     Text, 
     View 
 } from 'react-native'
-import { supabase, getSession, initUser } from '@/lib/supabase';
+import { 
+    supabase, 
+    getSession, 
+    fetchUser, 
+    fetchUserReadingHistory, 
+    fetchUserManhwaReadingStatus 
+} from '@/lib/supabase';
 import { useForm, Controller } from 'react-hook-form';
 import { Colors } from '@/constants/Colors';
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { router } from 'expo-router';
 import React from 'react'
-import { GlobalContext } from '@/helpers/context';
 import Toast from './Toast';
-
+import { useAuthState, useReadingHistoryState, useReadingStatusState } from '@/helpers/store';
 
 const schema = yup.object().shape({  
     email: yup
@@ -41,7 +46,10 @@ interface FormData {
 
 const SignInForm = () => {
 
-    const context = useContext(GlobalContext)
+    const { setReadingStatus } = useReadingStatusState()
+    const { setReadingHistory  } = useReadingHistoryState()
+    
+    const { login } = useAuthState()  
     const [isLoading, setLoading] = useState(false)
     
     const {
@@ -68,9 +76,18 @@ const SignInForm = () => {
             setLoading(false)
             return
         }
+    
+        const session = await getSession()
+        const user = await fetchUser()
+        login(user?.username, user?.image_url, session)
         
-        await initUser(context)
-        setLoading(false)        
+        await fetchUserReadingHistory()
+            .then(value => setReadingHistory(value))
+
+        await fetchUserManhwaReadingStatus()
+            .then(value => setReadingStatus(value))
+
+        setLoading(false)
         router.replace("/pages/Home")
     };
 
@@ -163,7 +180,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         height: 50,
         borderRadius: 4,
-        backgroundColor: Colors.gray
+        backgroundColor: Colors.orange
     },
     formButtonText: {
         color: Colors.white,

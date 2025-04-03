@@ -20,7 +20,6 @@ const _layout = () => {
         manhwa_alt_titles: new Map(),
         manhwa_queries: new Map(),
         genres: new Set(),
-        user_bookmarks: new Map(),
         session: null,
         most_view_manhwas: {mawnhas: [], last_update: null},
         last_update_manhwas: {mawnhas: [], last_update: null},
@@ -44,8 +43,7 @@ const _layout = () => {
             <Stack.Screen name='pages/AccountPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/Home' options={{headerShown: false}} />
             <Stack.Screen name='(auth)/SignInPage' options={{headerShown: false}} />  
-            <Stack.Screen name='(auth)/SignUpPage' options={{headerShown: false}} />  
-            <Stack.Screen name='pages/BookmarkPage' options={{headerShown: false}} />  
+            <Stack.Screen name='(auth)/SignUpPage' options={{headerShown: false}} />
             <Stack.Screen name='pages/ReadingHistoryPage' options={{headerShown: false}} />  
             <Stack.Screen name='pages/LibrayPage' options={{headerShown: false}} />  
         </Stack>

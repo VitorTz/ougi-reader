@@ -1,67 +1,67 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import ReadingStatusPicker from '@/components/ReadingStatusPicker'
+import { AppConstants } from '@/constants/AppConstants'
+import { useReadingStatusState } from '@/helpers/store'
+import { SafeAreaView, StyleSheet } from 'react-native'
+import ReturnButton from '@/components/ReturnButton'
+import React, { useCallback, useRef } from 'react'
+import ManhwaGrid from '@/components/ManhwaGrid'
+import { useFocusEffect } from 'expo-router'
 import { AppStyle } from '@/style/AppStyles'
 import TopBar from '@/components/TopBar'
 import { Manhwa } from '@/models/Manhwa'
-import ReturnButton from '@/components/ReturnButton'
-import DropDownPicker from 'react-native-dropdown-picker'
-import { useContext } from 'react'
-import { GlobalContext } from '@/helpers/context'
 import { useState } from 'react'
-import { Colors } from '@/constants/Colors'
-import { wp } from '@/helpers/util'
-import { AppConstants } from '@/constants/AppConstants'
-import ManhwaGrid from '@/components/ManhwaGrid'
+
+
 
 const LibrayPage = () => {
 
-    const context = useContext(GlobalContext)
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState<string>('Reading')
-    const [items, setItems] = useState(AppConstants.READING_STATUS.map((v) => {return {label: v, value: v}}))
+    const { readingStatus } = useReadingStatusState()
+    const [manhwas, setManhwas] = useState<Manhwa[]>([])    
+    const statusRef = useRef('Reading')
+    const manhwaByStatus = useRef<Map<string, Manhwa[]>>(new Map())
 
-    const [manhwa, setManhwas] = useState<Manhwa[]>([])
+    const sortStates = () => {
+        manhwaByStatus.current.clear()
+        AppConstants.READING_STATUS.forEach(item => manhwaByStatus.current.set(item, []))
+        readingStatus.forEach(
+            (value, key) => {
+                manhwaByStatus.current.get(value.status)!.push(value.manhwa)
+            }
+        )                
+        setManhwas([...manhwaByStatus.current.get(statusRef.current)!])
+    }
 
-    const handlePress = async (v: any) => {
+    const init = async () => {        
+        sortStates()
+    }
 
+    useFocusEffect(
+        useCallback(() => {
+            init()
+        }, [])
+    )
+
+    const onChangeValue = (status: any) => {
+        statusRef.current = status
+        setManhwas([...manhwaByStatus.current.get(status)!])
     }
 
     return (
 
-    <SafeAreaView style={AppStyle.safeArea} >
+    <SafeAreaView style={[AppStyle.safeArea, {gap: 10}]} >
         <TopBar title='Library' >
             <ReturnButton/>
         </TopBar>
 
-        <View style={styles.container} >            
-            <Text style={[AppStyle.textHeader, {color: Colors.orange}]}>{value ?  value : 'None'}</Text>
-            <DropDownPicker        
-                open={open}
-                style={{backgroundColor: Colors.orange, width: 200, borderWidth: 0}}
-                containerStyle={{width: 200}}
-                disabledStyle={{opacity: 0.5}}                             
-                items={items}
-                setOpen={setOpen}
-                theme='DARK'
-                listMode={'FLATLIST'}        
-                value={value}
-                setValue={setValue}
-                setItems={setItems}
-                mode='SIMPLE'
-                badgeProps={{activeOpacity: 0.5}}            
-                placeholder={'Reading Status'}
-                textStyle={AppStyle.textRegular}
-                min={0}
-                onChangeValue={(value: any) => handlePress(value)}
-                dropDownContainerStyle={{backgroundColor: Colors.gray}}/>
-        </View>
-
+        <ReadingStatusPicker
+            width={"100%"}
+            onChangeValue={onChangeValue} />
+        
         <ManhwaGrid
-            manhwas={manhwa}
+            manhwas={manhwas}
             numColumns={2}
-            hasResults={true}
-            
-            />
+            shouldShowChapterDate={false}
+            hasResults={true}/>    
 
     </SafeAreaView>
   )
