@@ -197,22 +197,6 @@ export async function insertComment(manhwa_id: number, user_id: string, comment:
     return data.comment_id
 }
 
-export async function fetchManhwaRatingExcludingUser(
-    p_manhwa_id: number
-): Promise<{rating: number, totalRatings: number}> {    
-    const session = await getSession()
-    if (!session) { return {rating: 0.0, totalRatings: 0} }
-    const { data, error } = await supabase
-        .rpc('get_average_rating_excluding_user', { p_manhwa_id, p_exclude_user_id: session.user.id });
-    
-    if (error) {
-        console.log("error fetch manhwa rating", p_manhwa_id, error)
-        return {rating: 0.0, totalRatings: 0}
-    }
-    
-    return {rating: data.avg_rating, totalRatings: data.total_ratings}
-}
-
 
 export async function upsertManhwaRating(p_manhwa_id: number, p_rating: number) {
     const session = await getSession()
@@ -445,8 +429,7 @@ export async function fetchChapterImages(chapter_id: number): Promise<ChapterIma
 }
 
 
-export async function updateManhwaViews(p_manhwa_id: number) {    
-    console.log("increment", p_manhwa_id)
+export async function updateManhwaViews(p_manhwa_id: number) {
     const { error } = await supabase
         .rpc('increment_manhwa_views', { p_manhwa_id  });
 

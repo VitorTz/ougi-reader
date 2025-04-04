@@ -16,6 +16,7 @@ const ManhwaRandomComponent = () => {
     const init = async () => {                    
         if (manhwas.length == 0 || Date.now() - lastUpdate > UPDATE_TIME_INTERVAL ) {                                
             await fetchRandomManhwa().then(values => {setManhwas(values)})
+            console.log("requesting random manhwas")
         }
     }
 
@@ -28,7 +29,7 @@ const ManhwaRandomComponent = () => {
 
     return (        
         <ManhwaHorizontalGrid 
-            title='Random 🎲' 
+            title='Random'
             manhwas={manhwas} 
             onPress={() => router.navigate("/pages/RandomManhwaPage")}/>
     )

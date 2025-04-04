@@ -1,29 +1,25 @@
 import { 
-  Animated,   
-  Easing,   
+  Animated,
   Pressable, 
   SafeAreaView, 
   ScrollView, 
   StyleSheet, 
   View } from 'react-native'
-import React, { 
-    useCallback, 
+import React, {     
     useState, 
-    useRef, 
-    useContext 
+    useRef,     
 } from 'react'
 import ManhwaLastReleasesComponent from '@/components/ManhwaLastUpdatedComponent'
 import MostViewedManhwasComponent from '@/components/ManhwasMostViewComponent'
 import ManhwaRandomComponent from '@/components/ManhwaRandomComponent'
 import { AppConstants } from '@/constants/AppConstants'
-import { router, useFocusEffect } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import LateralMenu from '@/components/LateralMenu'
-import { GlobalContext } from '@/helpers/context'
 import GenresGrid from '@/components/GenresGrid'
 import { AppStyle } from '@/style/AppStyles'
 import { Colors } from '@/constants/Colors'
 import TopBar from '@/components/TopBar'
+import { router } from 'expo-router'
 import { wp } from '@/helpers/util'
 
 
@@ -59,20 +55,14 @@ const Home = () => {
   const toggleMenu = () => {
     menuVisible ? closeMenu() : openMenu()
   }
-
-  const openAccount = () => {
-    router.navigate("/pages/AccountPage")
-  }
+  
 
   return (
     <SafeAreaView style={AppStyle.safeArea}>
-        <TopBar title='Ougi'>
+        <TopBar title='Ougi Reader'>
         <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", gap: 20}} >
             <Pressable onPress={searchPress} hitSlop={AppConstants.hitSlopLarge} >
               <Ionicons name='search-outline' size={28} color={'white'} />
-            </Pressable>
-            <Pressable onPress={openAccount} hitSlop={AppConstants.hitSlopLarge} >
-              <Ionicons name='person-outline' size={28} color={'white'} />
             </Pressable>
             <Pressable onPress={toggleMenu} hitSlop={AppConstants.hitSlopLarge} >
               <Ionicons name='options-outline' size={28} color={'white'} />
@@ -115,4 +105,4 @@ const styles = StyleSheet.create({
     shadowRadius: 5,    
     zIndex: 100
   }
-})
+})  

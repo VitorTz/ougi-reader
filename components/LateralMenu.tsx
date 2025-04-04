@@ -1,13 +1,14 @@
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native'
+import { AppConstants } from '@/constants/AppConstants'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { fetchRandomManhwa } from '@/lib/supabase'
+import { useAuthState, useReadingState } from '@/helpers/store'
 import { AppStyle } from '@/style/AppStyles'
+import { Colors } from '@/constants/Colors'
+import { router } from 'expo-router'
 import CloseBtn from './CloseBtn'
 import React from 'react'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { Colors } from '@/constants/Colors'
-import { fetchRandomManhwa } from '@/lib/supabase'
-import { router } from 'expo-router'
-import { AppConstants } from '@/constants/AppConstants'
-import { useReadingState } from '@/helpers/store'
+import LogoutButton from './LogoutButton'
 
 
 interface LateralMenuProps {
@@ -15,11 +16,12 @@ interface LateralMenuProps {
 }
 
 const iconColor = Colors.white
-
+const iconSize = 26
 
 
 const LateralMenu = ({closeMenu}: LateralMenuProps) => {
 
+    const { session } = useAuthState()
     const { setManhwa } = useReadingState()
 
     const randomRead = async () => {
@@ -32,6 +34,11 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
     const accountPage = () => {
         closeMenu()
         router.navigate("/pages/AccountPage")
+    }
+
+    const loginPage = () => {
+        closeMenu()
+        router.navigate("/(auth)/SignInPage")
     }
 
     const readingHistoryPage = () => {
@@ -52,28 +59,40 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             <CloseBtn onPress={closeMenu} style={{padding: 2}} />
         </View>
 
-        <Pressable 
-            onPress={accountPage} 
-            style={styles.link} 
-            hitSlop={AppConstants.hitSlopLarge} >
-            <Text style={AppStyle.textRegular}>Account</Text>
-            <Ionicons name='person-outline' size={20} color={iconColor} />
-        </Pressable>
+        {
+            session ? 
+            <Pressable 
+                onPress={accountPage} 
+                style={styles.link} 
+                hitSlop={AppConstants.hitSlopLarge} >
+                <Text style={AppStyle.textRegular}>Account</Text>
+                <Ionicons name='person-outline' size={iconSize} color={iconColor} />
+            </Pressable>
+                :
+            <Pressable 
+                onPress={loginPage} 
+                style={styles.link} 
+                hitSlop={AppConstants.hitSlopLarge} >
+                <Text style={AppStyle.textRegular}>Login</Text>
+                <Ionicons name='log-in' size={iconSize} color={iconColor} />
+            </Pressable>
+
+        }
 
         <Pressable 
             onPress={libraryPage} 
             style={styles.link} 
             hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Library</Text>
-            <Ionicons name='library-outline' size={20} color={iconColor} />
+            <Ionicons name='library-outline' size={iconSize} color={iconColor} />
         </Pressable>        
 
         <Pressable 
             onPress={randomRead} 
             style={styles.link} 
             hitSlop={AppConstants.hitSlopLarge} >
-            <Text style={AppStyle.textRegular}>Random read</Text>
-            <Ionicons name='book-outline' size={20} color={iconColor} />
+            <Text style={AppStyle.textRegular}>Random Manhwa</Text>
+            <Ionicons name='dice-outline' size={iconSize} color={iconColor} />
         </Pressable>
 
         <Pressable 
@@ -81,7 +100,7 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             style={styles.link} 
             hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Read history</Text>
-            <Ionicons name='reader-outline' size={20} color={iconColor} />
+            <Ionicons name='reader-outline' size={iconSize} color={iconColor} />
         </Pressable>
 
         <Pressable 
@@ -89,8 +108,9 @@ const LateralMenu = ({closeMenu}: LateralMenuProps) => {
             style={styles.link} 
             hitSlop={AppConstants.hitSlopLarge} >
             <Text style={AppStyle.textRegular}>Github</Text>
-            <Ionicons name='logo-github' size={20} color={iconColor} />
+            <Ionicons name='logo-github' size={iconSize} color={iconColor} />
         </Pressable>
+
     </View>
     )
 }

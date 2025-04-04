@@ -69,6 +69,9 @@ const ToastComponent = forwardRef((_, ref) => {
   );
 });
 
+export const ToastNotLogged = () => {
+  Toast.show({title: 'Info', message: 'You must be logged!', type: 'info'})
+}
 
 const Toast = {
   show: (options: ToastOptions) => {

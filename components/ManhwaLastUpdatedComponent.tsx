@@ -14,21 +14,21 @@ const ManhwaLastReleasesComponent = () => {
 
     const { manhwas, setManhwas, lastUpdate } = useLatestReleasesManhwaState()
 
-    const init = async () => {                                    
-        if (manhwas.length == 0 || Date.now() - lastUpdate > UPDATE_TIME_INTERVAL ) {
+    const init = async () => {
+        const currentTime = new Date().getTime()
+        if (manhwas.length == 0 || currentTime - lastUpdate > UPDATE_TIME_INTERVAL ) {
             await fetchLastUpdatedManhwas().then(values => {setManhwas(values)})
+            console.log("requesting latest release manhwas")
         }
     }
     
     useFocusEffect(
-        useCallback(() => {
-            init()
-        }, [])
+        () => {init()}
     )
 
     return (        
         <ManhwaHorizontalGrid 
-            title='Latest Releases 🔥' 
+            title='Latest Releases' 
             manhwas={manhwas} 
             onPress={() => router.navigate("/pages/LatestReleasesPage")}/>
     )

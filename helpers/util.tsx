@@ -1,5 +1,8 @@
 import { Dimensions } from "react-native";
 import { ManhwaComment } from "./types";
+import * as ImagePicker from 'expo-image-picker';
+import { Alert } from "react-native";
+
 
 
 export function sleep(ms: number) {
@@ -73,4 +76,14 @@ export function organizeComments(comments: ManhwaComment[]): ManhwaComment[] {
     });
 
     return topLevelComments;
+}
+
+
+export const checkForCameraRollPermission = async() => {
+    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+        Alert.alert("Please grant camera roll permissions inside your system's settings")
+    } else{
+        console.log('Media Permissions are granted')
+    }
 }

@@ -44,6 +44,8 @@ const ManhwaCover = ({
 
     const { setManhwa } = useReadingState()
 
+    const manhwaStatusColor = manhwa.status == "Completed" ? Colors.orange : Colors.backgroundColor
+
     const onPress = () => {
         setManhwa(manhwa)
         router.navigate("/pages/ManhwaPage")
@@ -53,21 +55,20 @@ const ManhwaCover = ({
         <Pressable style={[{width, marginRight, marginBottom}, styleProp]} onPress={onPress} >
             <Image 
                 source={manhwa.cover_image_url} 
-                contentFit='cover' 
-                style={[{borderRadius: 22, width, height}]}
-            />
+                contentFit='cover'
+                style={[{borderRadius: 22, width, height}]}/>
             <View style={styles.container} >
                 <Text numberOfLines={1} style={[AppStyle.textRegular, {fontSize: 20}]}>{manhwa.title}</Text>
                 {
-                showChaptersPreview && 
-                manhwa.chapters && 
-                manhwa.chapters.map(
-                    (item) => 
-                        <ChapterLink 
-                            shouldShowChapterDate={shouldShowChapterDate} 
-                            key={item.chapter_num} 
-                            manhwa={manhwa} 
-                            chapter={item} />
+                    showChaptersPreview && 
+                    manhwa.chapters && 
+                    manhwa.chapters.map(
+                        (item) => 
+                            <ChapterLink 
+                                shouldShowChapterDate={shouldShowChapterDate} 
+                                key={item.chapter_num} 
+                                manhwa={manhwa} 
+                                chapter={item} />
                 )}                
             </View>
             <ManhwaStatusComponent
@@ -76,7 +77,7 @@ const ManhwaCover = ({
                 paddingHorizontal={10}
                 paddingVertical={8}
                 fontSize={12}
-                backgroundColor={manhwa.status == "Completed" ? Colors.orange : Colors.backgroundColor}
+                backgroundColor={manhwaStatusColor}
                 borderRadius={22}
             />
         </Pressable>

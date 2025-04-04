@@ -2,13 +2,15 @@ import { StyleSheet  } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Manhwa } from '@/models/Manhwa'
 import { upsertManhwaReadingStatus } from '@/lib/supabase'
-import { useReadingStatusState } from '@/helpers/store'
+import { useAuthState, useReadingStatusState } from '@/helpers/store'
 import ReadingStatusPicker from './ReadingStatusPicker'
+import Toast, { ToastNotLogged } from './Toast'
 
 
 
 const AddToLibrary = ({manhwa}: {manhwa: Manhwa}) => {
 
+    const { session } = useAuthState()
     const { readingStatus, addReadingStatus } = useReadingStatusState()
     const [status, setStatus] = useState('None')
 
@@ -28,6 +30,10 @@ const AddToLibrary = ({manhwa}: {manhwa: Manhwa}) => {
     )
 
     const onChangeValue = async (status: any) => {
+        if (!session) {
+            ToastNotLogged()
+            return
+        }
         upsertManhwaReadingStatus(manhwa.manhwa_id, status)
         addReadingStatus(manhwa, status)
     }

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { fetchManhwaRating, fetchUserManhwaRating, upsertManhwaRating } from '@/lib/supabase'
 import { Rating, RatingProps } from '@kolking/react-native-rating';
 import { Manhwa } from '@/models/Manhwa';
-import Toast from './Toast';
+import Toast, { ToastNotLogged } from './Toast';
 import { Colors } from '@/constants/Colors';
 import { AppStyle } from '@/style/AppStyles';
 import { RatingRegister } from '@/helpers/types';
@@ -27,7 +27,7 @@ const ManhwaRating = ({manhwa}: ManhwaRankingProps) => {
         async (value: number) => {
             
             if (session == null) {
-                Toast.show({title: 'Error', message:'You are not logged!', type: 'error'})
+                ToastNotLogged()
                 return
             }
             setLoading(true)

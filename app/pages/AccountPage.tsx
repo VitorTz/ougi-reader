@@ -1,13 +1,12 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import LogoutButton from '@/components/LogoutButton'
 import React, { useCallback, useState } from 'react'
+import { router, useFocusEffect } from 'expo-router'
+import HomeButton from '@/components/HomeButton'
+import { useAuthState } from '@/helpers/store'
 import { AppStyle } from '@/style/AppStyles'
 import { Colors } from '@/constants/Colors'
-import { router, useFocusEffect } from 'expo-router'
 import TopBar from '@/components/TopBar'
-import HomeButton from '@/components/HomeButton'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import LogoutButton from '@/components/LogoutButton'
-import { useAuthState } from '@/helpers/store'
 
 
 
@@ -44,7 +43,6 @@ const AccountPage = () => {
           </TopBar>
           <View style={{width: '100%', marginTop: 20, alignItems: "center", justifyContent: "center"}} >
             <View style={{gap: 10, alignItems: "center"}} >
-              <Ionicons size={128} name='person-circle-outline' color={Colors.white} />
               <Text style={[AppStyle.textRegular, {fontSize: 20}]}>{username ? username : ''}</Text>
             </View>
           </View>

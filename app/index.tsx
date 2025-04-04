@@ -1,6 +1,15 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native'
+import { 
+  ActivityIndicator, 
+  SafeAreaView, 
+  StyleSheet, 
+  View 
+} from 'react-native'
 import React, { useEffect } from 'react'
-import { useReadingHistoryState, useReadingStatusState, useAuthState } from '@/helpers/store';
+import { 
+  useReadingHistoryState, 
+  useReadingStatusState, 
+  useAuthState 
+} from '@/helpers/store';
 import {
   useFonts,
   LeagueSpartan_100Thin,
@@ -16,7 +25,12 @@ import {
 import { AppStyle } from '@/style/AppStyles';
 import { Colors } from '@/constants/Colors';
 import { router } from 'expo-router';
-import { fetchUser, fetchUserManhwaReadingStatus, getSession, fetchUserReadingHistory } from '@/lib/supabase';
+import { 
+  fetchUser, 
+  fetchUserManhwaReadingStatus, 
+  getSession, 
+  fetchUserReadingHistory 
+} from '@/lib/supabase';
 
 
 
@@ -54,9 +68,7 @@ const index = () => {
 
   useEffect(
     () => {
-      if (fontsLoaded) {
-        init()
-      }
+      if (fontsLoaded) { init() }
     },
     [fontsLoaded]
   )

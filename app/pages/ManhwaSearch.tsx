@@ -30,19 +30,20 @@ const SearchManhwa = () => {
 
     const handleSearch = async (searchTerm: string | null, append: boolean = false) => {
         setLoading(true)
-        state.current.searchTerm = searchTerm ? searchTerm.trim() : ''
-        state.current.page = append ? state.current.page + 1 : 0
-        await fetchManhwaByName(
-            state.current.searchTerm, 
-            state.current.page * AppConstants.MANHWAS_PER_PAGE,
-            AppConstants.MANHWAS_PER_PAGE,
-            3
-        ).then(values => {
-                setHasResults(values.length > 0)
-                append ?
-                    setManhwas(prev => [...prev, ...values]) :
-                    setManhwas([...values])
-            })
+            console.log(searchTerm)
+            state.current.searchTerm = searchTerm ? searchTerm.trim() : ''
+            state.current.page = append ? state.current.page + 1 : 0
+            await fetchManhwaByName(
+                state.current.searchTerm, 
+                state.current.page * AppConstants.MANHWAS_PER_PAGE,
+                AppConstants.MANHWAS_PER_PAGE,
+                3
+            ).then(values => {
+                    setHasResults(values.length > 0)
+                    append ?
+                        setManhwas(prev => [...prev, ...values]) :
+                        setManhwas([...values])
+                })
         setLoading(false)
     }
 
